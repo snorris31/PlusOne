@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.enums.EventType;
+import com.example.sara.plusone.listeners.EventViewListener;
 import com.example.sara.plusone.objects.Event;
 import com.example.sara.plusone.objects.Search;
 
@@ -51,21 +52,22 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View row = convertView;
         Holder holder;
         final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 
-        if(row == null) {
-            row = inflater.inflate(resource, parent, false);
+        if(convertView == null) {
+            convertView = inflater.inflate(resource, parent, false);
 
             holder = new Holder();
             final EventAdapter thisInstance = this;
 
-            holder.title = (TextView)row.findViewById(R.id.title);
+            holder.layout = (RelativeLayout)convertView.findViewById(R.id.layout);
+
+            holder.title = (TextView)convertView.findViewById(R.id.title);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.title.getLayoutParams());
 
-            holder.garbageIcon = (ImageView)row.findViewById(R.id.garbage_icon);
-            holder.requestButton = (Button)row.findViewById(R.id.request_button);
+            holder.garbageIcon = (ImageView)convertView.findViewById(R.id.garbage_icon);
+            holder.requestButton = (Button)convertView.findViewById(R.id.request_button);
             if (isHomePage) {
                 params.addRule(RelativeLayout.LEFT_OF, R.id.garbage_icon);
 
@@ -91,7 +93,10 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             } else {
                 params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
 
-                if (((MainActivity)context).currentUser.id.equals(events.get(position).creatorID) || events.get(position).applicantIDs.contains(((MainActivity)context).currentUser.id)) {
+                if (((MainActivity)context).currentUser.id.equals(events.get(position).creatorID)) {
+                    holder.requestButton.setVisibility(View.GONE);
+                    holder.requestButton.setClickable(false);
+                } else if (events.get(position).applicantIDs.contains(((MainActivity)context).currentUser.id)){
                     holder.requestButton.setBackgroundColor(0x727272);
                     holder.requestButton.setText("Submitted");
                     holder.requestButton.setClickable(false);
@@ -99,7 +104,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                     holder.requestButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //TODO submit application for this event
+                            //TODO submit application for this event, notify creator
                             originalEvents.get(originalEvents.indexOf(events.get(position))).applicantIDs.add(((MainActivity) context).currentUser.id);
                             events.get(position).applicantIDs.add(((MainActivity) context).currentUser.id);
                             thisInstance.notifyDataSetChanged();
@@ -114,61 +119,28 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
             holder.title.setLayoutParams(params);
 
-            holder.time = (TextView)row.findViewById(R.id.time);
+            holder.time = (TextView)convertView.findViewById(R.id.time);
 
-            holder.description = (TextView)row.findViewById(R.id.description);
+            holder.description = (TextView)convertView.findViewById(R.id.description);
 
-            row.setTag(holder);
+            convertView.setTag(holder);
         } else {
-            holder = (Holder)row.getTag();
+            holder = (Holder)convertView.getTag();
         }
 
         final Event event = events.get(position);
+        holder.layout.setBackgroundColor(EventType.getColor(event.type));
         holder.title.setText(event.title + ": " + event.type.toString());
         holder.time.setText(SimpleDateFormat.getDateTimeInstance().format(event.date));
         holder.description.setText(event.description);
 
-        row.setOnClickListener(new View.OnClickListener() {
+        convertView.setOnClickListener(new EventViewListener(inflater, event, context));
 
-            TextView titleField;
-            TextView posterField;
-            TextView typeField;
-            TextView dateField;
-            TextView addressField;
-            TextView descriptionField;
-
-            @Override
-            public void onClick(View v) {
-                View detailView = inflater.inflate(R.layout.fragment_event_detail, null);
-
-                titleField = (TextView)detailView.findViewById(R.id.title_field);
-                titleField.setText(event.title);
-
-                //TODO get poster info from database
-                posterField = (TextView)detailView.findViewById(R.id.poster_field);
-                posterField.setText(event.creatorID);
-
-                typeField = (TextView)detailView.findViewById(R.id.type_field);
-                typeField.setText(event.type.toString());
-
-                dateField = (TextView)detailView.findViewById(R.id.date_field);
-                dateField.setText(new SimpleDateFormat().format(event.date));
-
-                addressField = (TextView)detailView.findViewById(R.id.address_field);
-                addressField.setText(event.address);
-
-                descriptionField = (TextView)detailView.findViewById(R.id.description_field);
-                descriptionField.setText(event.description);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Event details").setView(detailView).show();
-            }
-        });
-
-        return row;
+        return convertView;
     }
 
     static class Holder {
+        RelativeLayout layout;
         TextView title;
         ImageView garbageIcon;
         Button requestButton;
