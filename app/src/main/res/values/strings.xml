@@ -16,4 +16,5 @@
     <string name="event_title">Name of Event: </string>
     <string name="title_activity_create_event">Create Event</string>
     <string name="title_activity_google_places_api">GooglePlacesAPI</string>
+    <string name="title_activity_create_account">CreateAccount</string>
 </resources>

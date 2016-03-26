@@ -40,8 +40,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         super(context, resource, events);
         this.context = context;
         this.resource = resource;
-        this.events = events;
-        this.originalEvents = new ArrayList(events);
+        this.events = new ArrayList(events);
+        this.originalEvents = events;
         this.isHomePage = isHomePage;
     }
 
