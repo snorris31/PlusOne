@@ -8,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.facebook.FacebookSdk;
 
+
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +37,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
