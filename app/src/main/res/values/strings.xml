@@ -3,5 +3,13 @@
     <string name="action_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_new_event"><b><u>Create New Event</u></b></string>
+    <string name="event_description">Description: </string>
+    <string name="event_type"> Type: (Ex: Movies, Gym, Concert) </string>
+    <string name="event_date"> Date: </string>
+    <string name="event_time"> Time: </string>
+    <string name="event_location"> Location: </string>
+    <string name="event_title">Name of Event: </string>
+    <string name="title_activity_create_event">Create Event</string>
+    <string name="title_activity_google_places_api">GooglePlacesAPI</string>
 </resources>
