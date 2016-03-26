@@ -12,14 +12,20 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 
 
 import com.facebook.appevents.AppEventsLogger;
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
     TabLayout tabLayout;
-
+    Firebase mFirebaseRef;
+    CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Firebase.setAndroidContext(this);
-        Firebase myFirebaseRef = new Firebase(FIREBASE_URL);
+         mFirebaseRef = new Firebase(FIREBASE_URL);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -51,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
         mPagerAdapter = new ScreenSlider(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
-
         
     }
+
 
     @Override
     protected void onResume() {
@@ -91,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if( id == R.id.login_page){
             Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -134,6 +141,31 @@ public class MainActivity extends AppCompatActivity {
                     return "Notifications";
             }
             return null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+    private void onFacebookAccessTokenChange(AccessToken token) {
+        if (token != null) {
+            mFirebaseRef.authWithOAuthToken("facebook", token.getToken(), new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    // The Facebook user is now authenticated with your Firebase app
+                    Log.d("Logon", authData.toString());
+                }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    // there was an error
+                }
+            });
+        } else {
+        /* Logged out of Facebook so do a logout from the Firebase app */
+            mFirebaseRef.unauth();
         }
     }
 }
