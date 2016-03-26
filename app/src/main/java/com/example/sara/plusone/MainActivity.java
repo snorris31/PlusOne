@@ -62,15 +62,6 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         mFirebaseRef = new Firebase(FIREBASE_URL);
 
-        AuthData authData = mFirebaseRef.getAuth();
-        if (authData != null) {
-            // user authenticated
-            Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MainActivity.this, "Need to sign in", Toast.LENGTH_SHORT).show();
-            // no user authenticated
-        }
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,28 +75,39 @@ public class MainActivity extends AppCompatActivity {
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
 
-        //TODO fetch all events from database
-        events = new ArrayList<>();
+        AuthData authData = mFirebaseRef.getAuth();
+        if (authData != null) {
+            //TODO fetch all events from database
+            events = new ArrayList<>();
 
-        //TODO fetch currentUser data here. this one is a demo
-        ArrayList<Event> sampleEvents = new ArrayList<>();
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-        currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
-        currentUser.setEvents(sampleEvents);
+            //TODO fetch currentUser data here. this one is a demo
+            ArrayList<Event> sampleEvents = new ArrayList<>();
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
+            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
+            currentUser.setEvents(sampleEvents);
 
-        Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
-        eventRef.setValue(sampleEvents);
+            Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
+            eventRef.setValue(sampleEvents);
 
-        tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
-        tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
-        tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages_grey));
-        //TODO change based on users notification status
-        tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert_grey));
+            tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
+            tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
+            tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages_grey));
+            //TODO change based on users notification status
+            tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert_grey));
+            // user authenticated
+            Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent, 1);
+            // no user authenticated
+        }
+
+
     }
 
     @Override
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private class ScreenSlider extends FragmentStatePagerAdapter {
         public ScreenSlider(FragmentManager fm) {
             super(fm);
-        }
+        }*
 
         @Override
         public Fragment getItem(int position) {

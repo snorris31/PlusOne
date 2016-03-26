@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sara.plusone.objects.CurrentUser;
@@ -59,6 +60,7 @@ public class LoginFragment extends Fragment {
     int mAge ;
     String mName;
     Bitmap mProfilePic;
+    Button logoutButton;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -84,30 +86,34 @@ public class LoginFragment extends Fragment {
         FacebookSdk.sdkInitialize(getContext());
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        logoutButton = (Button)view.findViewById(R.id.logout_button);
 
         loginButton.setReadPermissions(Arrays.asList(
                 "public_profile", "email", "user_birthday", "user_friends"));
         // If using in a fragment
         loginButton.setFragment(this);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+                        .Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse graphResponse) {
+
+                        LoginManager.getInstance().logOut();
+                        mFirebaseRef.unauth();
+                        getActivity().finish();
+                    }
+                }).executeAsync();
+            }
+        });
         // Other app specific specialization
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                //TODO:App still thinks your logged in
                 mAccessToken = loginResult.getAccessToken();
-                if ( AccessToken.getCurrentAccessToken() == null){
-                    new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
-                            .Callback() {
-                        @Override
-                        public void onCompleted(GraphResponse graphResponse) {
-
-                            LoginManager.getInstance().logOut();
-                            mFirebaseRef.unauth();
-                        }
-                    }).executeAsync();
-                }else {
                     GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
                         @Override
                         public void onCompleted(JSONObject object, GraphResponse response) {
@@ -126,7 +132,6 @@ public class LoginFragment extends Fragment {
                     parameters.putBoolean("redirect", false);
                     request.setParameters(parameters);
                     request.executeAsync();
-                }
                 Intent i = new Intent(getContext(), MainActivity.class);
                 startActivity(i);
                 Log.d("Report", "Logged in");
