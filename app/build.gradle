@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    dexOptions { javaMaxHeapSize "2g" }
     buildTypes {
         release {
             minifyEnabled false
@@ -32,4 +33,5 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
 }
