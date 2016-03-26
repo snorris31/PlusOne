@@ -16,6 +16,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -32,25 +33,36 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.CurrentUser;
 import com.example.sara.plusone.objects.Event;
 import com.example.sara.plusone.objects.Search;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
+
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
     TabLayout tabLayout;
-
     public CurrentUser currentUser;
     public ArrayList<Event> events;
+    Firebase mFirebaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Firebase.setAndroidContext(this);
+        mFirebaseRef = new Firebase(FIREBASE_URL);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,24 +86,54 @@ public class MainActivity extends AppCompatActivity {
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
 
-        //TODO fetch all events from database
-        events = new ArrayList<>();
+        AuthData authData = mFirebaseRef.getAuth();
+        if (authData != null) {
+            //TODO fetch all events from database
+            events = new ArrayList<>();
 
-        //TODO fetch currentUser data here. this one is a demo
-        ArrayList<Event> sampleEvents = new ArrayList<>();
-        sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-        currentUser = new CurrentUser("-1", "test", 21, null);
+            //TODO fetch currentUser data here. this one is a demo
+            ArrayList<Event> sampleEvents = new ArrayList<>();
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
+            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
 
-        tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
-        tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
-        tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
-        //TODO change based on users notification status
-        tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
+            Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
+            eventRef.setValue(sampleEvents);
+
+            tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
+            tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
+            tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
+            //TODO change based on users notification status
+            tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
+            // user authenticated
+            Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent, 1);
+            // no user authenticated
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
@@ -159,7 +203,10 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if( id == R.id.login_page){
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent, 1);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -186,6 +233,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return 4;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Home";
+                case 1:
+                    return "Events";
+                case 2:
+                    return "Messages";
+                case 3:
+                    return "Notifications";
+            }
+            return null;
         }
     }
 

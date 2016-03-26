@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Plus One</string>
     <string name="action_settings">Settings</string>
+    <string name="facebook_app_id">1599937860330817</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">LoginActivity</string>
     <string name="create_new_event"><b><u>Create New Event</u></b></string>
     <string name="event_description">Description: </string>
     <string name="event_type"> Type: (Ex: Movies, Gym, Concert) </string>
