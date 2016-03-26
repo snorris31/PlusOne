@@ -1,19 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
     tools:context="com.example.sara.plusone.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-    <ListView
+        android:id="@+id/top_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView3"
-        android:layout_gravity="center" />
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:text="Your events"/>
 
-</FrameLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorSecondaryText"
+        android:layout_below="@id/top_text"
+        android:layout_marginTop="10dp"/>
+
+    <ListView
+        android:id="@+id/event_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true"
+        android:fastScrollAlwaysVisible="false"
+        android:layout_below="@id/divider"/>
+
+</RelativeLayout>

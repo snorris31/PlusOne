@@ -17,24 +17,22 @@ public class Event {
 
     public EventType type;
     public Date date;
-    private long latitude;
-    private long longitude;
+    public String address;
     public String title;
     public String description;
     public boolean completed;
 
-    public Event(String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, long latitude, long longitude, String title, String description, boolean completed) {
-        this("-1", creatorID, applicantIDs, type, date, latitude, longitude, title, description, completed);
+    public Event(String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, String address, String title, String description, boolean completed) {
+        this("-1", creatorID, applicantIDs, type, date, address, title, description, completed);
     }
 
-    public Event(String id, String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, long latitude, long longitude, String title, String description, boolean completed) {
+    public Event(String id, String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, String address, String title, String description, boolean completed) {
         this.id = id;
         this.creatorID = creatorID;
         this.applicantIDs = applicantIDs == null ? new ArrayList<String>() : applicantIDs;
         this.type = type;
         this.date = date;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.address = address;
         this.title = title;
         this.description = description == null ? "" : description;
         this.completed = completed;
