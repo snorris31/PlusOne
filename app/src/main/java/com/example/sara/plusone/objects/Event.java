@@ -22,11 +22,11 @@ public class Event {
     public String description;
     public boolean completed;
 
-    public Event(String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, String address, String title, String description, boolean completed) {
+    public Event(String creatorID, ArrayList<String> applicantIDs, String type, Date date, String address, String title, String description, boolean completed) {
         this("-1", creatorID, applicantIDs, type, date, address, title, description, completed);
     }
 
-    public Event(String id, String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, String address, String title, String description, boolean completed) {
+    public Event(String id, String creatorID, ArrayList<String> applicantIDs, String type, Date date, String address, String title, String description, boolean completed) {
         this.id = id;
         this.creatorID = creatorID;
         this.applicantIDs = applicantIDs == null ? new ArrayList<String>() : applicantIDs;

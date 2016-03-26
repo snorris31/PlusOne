@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private class ScreenSlider extends FragmentStatePagerAdapter {
         public ScreenSlider(FragmentManager fm) {
             super(fm);
-        }*
+        };
 
         @Override
         public Fragment getItem(int position) {
