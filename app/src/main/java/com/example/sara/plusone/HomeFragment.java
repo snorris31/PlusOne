@@ -24,9 +24,8 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        listView = (ListView)view.findViewById(R.id.event_list);
-
-        EventAdapter adapter = new EventAdapter(getActivity(), R.layout.event_segment, ((MainActivity)getActivity()).currentUser.events, true);
+        listView = (ListView) view.findViewById(R.id.event_list);
+        EventAdapter adapter = new EventAdapter(getActivity(), R.layout.event_segment, ((MainActivity) getActivity()).currentUser.events, true);
         listView.setAdapter(adapter);
 
         return view;

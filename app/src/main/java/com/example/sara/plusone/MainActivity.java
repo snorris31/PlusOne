@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
 
     ViewPager mPager;
@@ -74,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         mPagerAdapter = new ScreenSlider(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
+        events = new ArrayList<>();
 
         AuthData authData = mFirebaseRef.getAuth();
         if (authData != null) {
             //TODO fetch all events from database
-            events = new ArrayList<>();
 
             //TODO fetch currentUser data here. this one is a demo
             ArrayList<Event> sampleEvents = new ArrayList<>();
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     private class ScreenSlider extends FragmentStatePagerAdapter {
         public ScreenSlider(FragmentManager fm) {
             super(fm);
-        }*
+        }
 
         @Override
         public Fragment getItem(int position) {

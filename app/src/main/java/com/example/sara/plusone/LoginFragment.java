@@ -46,6 +46,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.callback.Callback;
 
@@ -92,21 +94,55 @@ public class LoginFragment extends Fragment {
                 "public_profile", "email", "user_birthday", "user_friends"));
         // If using in a fragment
         loginButton.setFragment(this);
+//        logoutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+//                        .Callback() {
+//                    @Override
+//                    public void onCompleted(GraphResponse graphResponse) {
+//
+//                        LoginManager.getInstance().logOut();
+//                        mFirebaseRef.unauth();
+//                        getActivity().finish();
+//                    }
+//                }).executeAsync();
+//            }
+//        });
+
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
-                        .Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse graphResponse) {
+                if (mFirebaseRef.getAuth() == null) {
 
-                        LoginManager.getInstance().logOut();
-                        mFirebaseRef.unauth();
-                        getActivity().finish();
-                    }
-                }).executeAsync();
+                    final CountDownLatch latch = new CountDownLatch(1);
+
+                    mFirebaseRef.authAnonymously(new Firebase.AuthResultHandler() {
+                        @Override
+                        public void onAuthenticated(AuthData authData) {
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void onAuthenticationError(FirebaseError firebaseError) {
+                            throw firebaseError.toException();
+                        }
+                    });
+
+                    awaitLatch(latch);
+                }
+
+
+                Firebase userRef = new Firebase(MainActivity.FIREBASE_URL).child("users");
+                CurrentUser user = new CurrentUser(mFirebaseRef.getAuth().getUid(),"Anon",99,null);
+                Map<String,CurrentUser> userMap = new HashMap<String, CurrentUser>();
+                userMap.put(mFirebaseRef.getAuth().getUid(),user);
+                userRef.setValue(userMap);
+                getActivity().finish();
             }
         });
+
+
         // Other app specific specialization
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -127,14 +163,13 @@ public class LoginFragment extends Fragment {
                         }
 
                     });
-                    Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name,birthday,picture");
-                    parameters.putBoolean("redirect", false);
-                    request.setParameters(parameters);
-                    request.executeAsync();
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,birthday,picture");
+                parameters.putBoolean("redirect", false);
+                request.setParameters(parameters);
+                request.executeAsync();
                 Intent i = new Intent(getContext(), MainActivity.class);
                 startActivity(i);
-                Log.d("Report", "Logged in");
             }
 
             @Override
@@ -153,7 +188,13 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-
+    private void awaitLatch(CountDownLatch latch) {
+        try {
+            latch.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     private int getAge(String birthDate){
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy",Locale.US);
         int diff = 0;
