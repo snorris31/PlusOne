@@ -1,5 +1,8 @@
 package com.example.sara.plusone;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,15 +23,22 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.CurrentUser;
 import com.example.sara.plusone.objects.Event;
+import com.example.sara.plusone.objects.Search;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.GraphRequest;
@@ -39,6 +49,7 @@ import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -88,16 +99,15 @@ public class MainActivity extends AppCompatActivity {
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
             currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
-            currentUser.setEvents(sampleEvents);
 
             Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
             eventRef.setValue(sampleEvents);
 
-            tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
-            tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
-            tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages_grey));
+            tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
+            tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
+            tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
             //TODO change based on users notification status
-            tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert_grey));
+            tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
             // user authenticated
             Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
         } else {
@@ -129,6 +139,55 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final Activity context = this;
+
+        menu.findItem(R.id.search).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+            EditText matchingField;
+            Spinner eventTypeField;
+            Spinner locationSpinner;//TODO
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                final Fragment currentFragment = mPagerAdapter.getItem(mPager.getCurrentItem());
+                if (mPager.getCurrentItem() == 0 || mPager.getCurrentItem() == 1) {
+                    final Search currentSearch = currentFragment instanceof HomeFragment ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+
+                    final LayoutInflater inflater = context.getLayoutInflater();
+                    View detailView = inflater.inflate(R.layout.fragment_search_options, null);
+
+                    matchingField = (EditText)detailView.findViewById(R.id.matching_field);
+                    matchingField.setText(currentSearch.textMatch);
+
+                    eventTypeField = (Spinner)detailView.findViewById(R.id.event_type_field);
+                    ArrayList<String> adjustedArray = EventType.asArrayList();
+                    adjustedArray.add(0, "Any");
+                    eventTypeField.setAdapter(new ArrayAdapter<>(context, R.layout.spinner_item, R.id.view, adjustedArray));
+                    eventTypeField.setSelection(adjustedArray.indexOf(currentSearch.eventType));
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Search options").setView(detailView).setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            currentSearch.textMatch = matchingField.getText().toString();
+                            currentSearch.eventType = (String)eventTypeField.getSelectedItem();
+                            //TODO currentSearch.latLong = something
+
+                            String constraint = currentSearch.textMatch + "~" + currentSearch.eventType;
+
+                            if (currentFragment instanceof HomeFragment) {
+                                HomeFragment.adapter.getFilter().filter(constraint);
+                            } else {
+                                EventsFragment.adapter.getFilter().filter(constraint);
+                            }
+                        }
+                    }).setNegativeButton("Cancel", null).show();
+                }
+                return true;
+            }
+        });
+
         return true;
     }
 

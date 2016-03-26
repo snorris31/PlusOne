@@ -10,13 +10,9 @@ import java.util.ArrayList;
  */
 public class CurrentUser extends Person {
 
-    public ArrayList<Event> events;
     public ArrayList<Integer> notifications;
 
     public CurrentUser(String id, String name, int age, Bitmap picture) {
         super(id,name, age, picture);
     }
-    public void setEvents(ArrayList<Event> e){
-        this.events = e;
-   }
 }

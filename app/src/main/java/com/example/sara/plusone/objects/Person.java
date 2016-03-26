@@ -13,7 +13,6 @@ import java.util.List;
 public class Person {
 
     public String id;
-    public ArrayList<Event> eventList;
     public String name;
     public int age;
     public Bitmap picture;

@@ -8,23 +8,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
+import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.Event;
+import com.example.sara.plusone.objects.Search;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Zack on 3/26/2016.
  */
-public class EventAdapter extends ArrayAdapter<Event> {
+public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
     private int resource;
     private Context context;
     private ArrayList<Event> events;
+    private ArrayList<Event> originalEvents;
     private boolean isHomePage;
 
     public EventAdapter(Context context, int resource, ArrayList<Event> events, boolean isHomePage) {
@@ -32,6 +41,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         this.context = context;
         this.resource = resource;
         this.events = events;
+        this.originalEvents = new ArrayList(events);
         this.isHomePage = isHomePage;
     }
 
@@ -129,5 +139,61 @@ public class EventAdapter extends ArrayAdapter<Event> {
         ImageView garbageIcon;
         TextView time;
         TextView description;
+    }
+
+    @Override
+    public int getCount() {
+        return events == null ? 0 : events.size();
+    }
+
+    @Override
+    public Event getItem(int position) {
+        return events.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+
+            //constraint is formatted as such: "<matching_string>~<event_type>"
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+                List<Event> filteredList = new ArrayList<>();
+
+                String[] pieces = constraint.toString().split("~");
+                String matchingString = pieces[0];
+                EventType eventType = pieces[1].equals("Any") ? null : EventType.fromString(pieces[1]);
+
+                String currentUserID = ((MainActivity)context).currentUser.id;
+
+                for (int i = 0; i < originalEvents.size(); i++) {
+                    Event event = originalEvents.get(i);
+                    boolean matchesString = matchingString.isEmpty() || event.title.toLowerCase().contains(matchingString.toLowerCase()) || event.description.toLowerCase().contains(matchingString.toLowerCase());
+                    boolean matchesEventType = eventType == null || (eventType == event.type);
+                    boolean isValid = (isHomePage && (currentUserID.equals(event.creatorID) || event.applicantIDs.contains(currentUserID))) || (!isHomePage && event.date.after(Calendar.getInstance().getTime()));
+                    if (matchesString && matchesEventType && isValid) {
+                        filteredList.add(event);
+                    }
+                }
+
+                results.count = filteredList.size();
+                results.values = filteredList;
+
+                return results;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                events = (ArrayList<Event>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }
