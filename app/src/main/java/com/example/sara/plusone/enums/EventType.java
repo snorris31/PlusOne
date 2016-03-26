@@ -12,7 +12,7 @@ public enum EventType {
 
     public static int getColor(EventType type) {
         switch(type) {
-            case CONCERT: return R.color.purple;
+            case CONCERT: return R.color.cyan;
             case GREEK: return R.color.yellow;
             case PARTY: return R.color.blue;
             case GYM: return R.color.red;
