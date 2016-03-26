@@ -12,20 +12,18 @@ import java.util.List;
 public class Person {
 
     public String id;
-    public ArrayList<Event> eventList;
     public String name;
     public int age;
     public Drawable picture;
 
     public Person(String name, int age, Drawable picture) {
-        this("-1", name, age, picture, null);
+        this("-1", name, age, picture);
     }
 
-    public Person(String id, String name, int age, Drawable picture, ArrayList<Event> eventList) {
+    public Person(String id, String name, int age, Drawable picture) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.picture = picture;
-        this.eventList = eventList;
     }
 }

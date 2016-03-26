@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.sara.plusone.adapters.EventAdapter;
+import com.example.sara.plusone.objects.Search;
 
 public class EventsFragment extends Fragment {
 
     ListView listView;
+
+    public static EventAdapter adapter;
+    public static Search currentSearch = new Search("", "any", "any");
 
     public EventsFragment() {
     }
@@ -22,7 +26,7 @@ public class EventsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
 
         listView = (ListView)view.findViewById(R.id.event_list);
-        EventAdapter adapter = new EventAdapter(getActivity(), R.layout.event_segment, ((MainActivity) getActivity()).events, false);
+        adapter = new EventAdapter(getActivity(), R.layout.event_segment, ((MainActivity) getActivity()).events, false);
         listView.setAdapter(adapter);
 
         return view;

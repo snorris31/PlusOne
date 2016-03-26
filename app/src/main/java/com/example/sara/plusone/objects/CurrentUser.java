@@ -9,12 +9,9 @@ import java.util.ArrayList;
  */
 public class CurrentUser extends Person {
 
-    public ArrayList<Event> events;
     public ArrayList<Integer> notifications;
 
-    public CurrentUser(String id, String name, int age, Drawable picture, ArrayList<Event> events, ArrayList<Integer> notifications) {
+    public CurrentUser(String id, String name, int age, Drawable picture) {
         super(id, name, age, picture);
-        this.events = events;
-        this.notifications = notifications;
     }
 }
