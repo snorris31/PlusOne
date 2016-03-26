@@ -3,6 +3,12 @@ package com.example.sara.plusone;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,6 +23,10 @@ import com.firebase.client.Firebase;
 public class MainActivity extends AppCompatActivity {
 
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
+
+    ViewPager mPager;
+    ScreenSlider mPagerAdapter;
+    TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        mPager = (ViewPager) findViewById(R.id.pager);
+        tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+        mPagerAdapter = new ScreenSlider(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
+        tabLayout.setupWithViewPager(mPager);
 
         
     }
@@ -76,4 +91,49 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class ScreenSlider extends FragmentStatePagerAdapter {
+        public ScreenSlider(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0:
+                    return new HomeFragment();
+                case 1:
+                    return new EventsFragment();
+                case 2:
+                    return new MessagesFragment();
+                case 3:
+                    return new NotificationsFragment();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Home";
+                case 1:
+                    return "Events";
+                case 2:
+                    return "Messages";
+                case 3:
+                    return "Notifications";
+            }
+            return null;
+        }
+    }
 }
+
+
+
+
