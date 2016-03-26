@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
@@ -55,12 +59,16 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             row = inflater.inflate(resource, parent, false);
 
             holder = new Holder();
+            final EventAdapter thisInstance = this;
 
             holder.title = (TextView)row.findViewById(R.id.title);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.title.getLayoutParams());
 
-            holder.garbageIcon = (ImageView) row.findViewById(R.id.garbage_icon);
+            holder.garbageIcon = (ImageView)row.findViewById(R.id.garbage_icon);
+            holder.requestButton = (Button)row.findViewById(R.id.request_button);
             if (isHomePage) {
-                final EventAdapter thisInstance = this;
+                params.addRule(RelativeLayout.LEFT_OF, R.id.garbage_icon);
+
                 holder.garbageIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -69,16 +77,42 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //TODO delete event from database
+                                originalEvents.remove(events.get(position));
                                 events.remove(position);
                                 thisInstance.notifyDataSetChanged();
+                                Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
                             }
                         }).setNegativeButton("No", null).show();
                     }
                 });
+
+                holder.requestButton.setVisibility(View.GONE);
+                holder.requestButton.setClickable(false);
             } else {
-                holder.garbageIcon.setVisibility(View.INVISIBLE);
+                params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
+
+                if (((MainActivity)context).currentUser.id.equals(events.get(position).creatorID) || events.get(position).applicantIDs.contains(((MainActivity)context).currentUser.id)) {
+                    holder.requestButton.setBackgroundColor(0x727272);
+                    holder.requestButton.setText("Submitted");
+                    holder.requestButton.setClickable(false);
+                } else {
+                    holder.requestButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //TODO submit application for this event
+                            originalEvents.get(originalEvents.indexOf(events.get(position))).applicantIDs.add(((MainActivity) context).currentUser.id);
+                            events.get(position).applicantIDs.add(((MainActivity) context).currentUser.id);
+                            thisInstance.notifyDataSetChanged();
+                            Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                holder.garbageIcon.setVisibility(View.GONE);
                 holder.garbageIcon.setClickable(false);
             }
+
+            holder.title.setLayoutParams(params);
 
             holder.time = (TextView)row.findViewById(R.id.time);
 
@@ -137,6 +171,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
     static class Holder {
         TextView title;
         ImageView garbageIcon;
+        Button requestButton;
         TextView time;
         TextView description;
     }

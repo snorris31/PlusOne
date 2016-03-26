@@ -48,10 +48,15 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
@@ -112,8 +117,31 @@ public class MainActivity extends AppCompatActivity {
 //             user authenticated
             Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
         } else {
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivityForResult(intent, 1);
+//            Intent intent = new Intent(this,LoginActivity.class);
+//            startActivityForResult(intent, 1);
+            mFirebaseRef.createUser("TestEmail@gmail.com", "password", new Firebase.ValueResultHandler<Map<String, Object>>() {
+                @Override
+                public void onSuccess(Map<String, Object> stringObjectMap) {
+                    System.out.print(stringObjectMap.get("uid"));
+                }
+
+                @Override
+                public void onError(FirebaseError firebaseError) {
+
+                }
+            });
+
+            mFirebaseRef.authWithPassword("TestEmail@gmail.com", "password", new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    Toast.makeText(MainActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+
+                }
+            });
             // no user authenticated
         }
 
@@ -126,6 +154,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+    }
+
+    private void awaitLatch(CountDownLatch latch) {
+        try {
+            latch.await(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
