@@ -1,12 +1,16 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
     tools:context="com.example.sara.plusone.EventsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/event_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true"
+        android:fastScrollAlwaysVisible="false"/>
 
-</FrameLayout>
+</LinearLayout>

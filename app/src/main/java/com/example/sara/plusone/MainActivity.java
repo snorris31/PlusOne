@@ -1,7 +1,6 @@
 package com.example.sara.plusone;
 
 import android.content.Intent;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,16 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-
-
-import com.facebook.appevents.AppEventsLogger;
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-
 public class MainActivity extends AppCompatActivity {
 
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
@@ -43,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
     TabLayout tabLayout;
+
+    public CurrentUser currentUser;
+    public ArrayList<Event> events;
+
     Firebase mFirebaseRef;
     CallbackManager callbackManager;
     @Override
@@ -67,12 +60,24 @@ public class MainActivity extends AppCompatActivity {
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
 
+        //TODO fetch all events from database
+        events = new ArrayList<>();
+
+        //TODO fetch currentUser data here. this one is a demo
+        ArrayList<Event> sampleEvents = new ArrayList<>();
+        sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
+        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event("-1", null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
+        currentUser = new CurrentUser("-1", "test", 21, null, sampleEvents, null);
+
         tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
         tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
         tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages_grey));
         //TODO change based on users notification status
         tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert_grey));
-        
     }
 
     @Override
@@ -157,30 +162,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-    private void onFacebookAccessTokenChange(AccessToken token) {
-        if (token != null) {
-            mFirebaseRef.authWithOAuthToken("facebook", token.getToken(), new Firebase.AuthResultHandler() {
-                @Override
-                public void onAuthenticated(AuthData authData) {
-                    // The Facebook user is now authenticated with your Firebase app
-                    Log.d("Logon", authData.toString());
-                }
-
-                @Override
-                public void onAuthenticationError(FirebaseError firebaseError) {
-                    // there was an error
-                }
-            });
-        } else {
-        /* Logged out of Facebook so do a logout from the Firebase app */
-            mFirebaseRef.unauth();
-        }
-    }
     public void startEvent(){
         Intent intent = new Intent(this,CreateEvent.class);
         startActivity(intent);
