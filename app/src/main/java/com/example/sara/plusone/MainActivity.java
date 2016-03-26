@@ -1,5 +1,6 @@
 package com.example.sara.plusone;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -51,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startEvent();
             }
         });
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -127,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 4;
         }
+    }
+
+    public void startEvent(){
+        Intent intent = new Intent(this,CreateEvent.class);
+        startActivity(intent);
     }
 }
 
