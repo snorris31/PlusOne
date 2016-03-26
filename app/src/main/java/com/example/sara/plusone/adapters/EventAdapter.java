@@ -91,16 +91,22 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             } else {
                 params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
 
-                holder.requestButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //TODO submit application for this event
-                        originalEvents.get(originalEvents.indexOf(events.get(position))).applicantIDs.add(((MainActivity) context).currentUser.id);
-                        events.get(position).applicantIDs.add(((MainActivity)context).currentUser.id);
-                        thisInstance.notifyDataSetChanged();
-                        Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (((MainActivity)context).currentUser.id.equals(events.get(position).creatorID) || events.get(position).applicantIDs.contains(((MainActivity)context).currentUser.id)) {
+                    holder.requestButton.setBackgroundColor(0x727272);
+                    holder.requestButton.setText("Submitted");
+                    holder.requestButton.setClickable(false);
+                } else {
+                    holder.requestButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //TODO submit application for this event
+                            originalEvents.get(originalEvents.indexOf(events.get(position))).applicantIDs.add(((MainActivity) context).currentUser.id);
+                            events.get(position).applicantIDs.add(((MainActivity) context).currentUser.id);
+                            thisInstance.notifyDataSetChanged();
+                            Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 holder.garbageIcon.setVisibility(View.GONE);
                 holder.garbageIcon.setClickable(false);
