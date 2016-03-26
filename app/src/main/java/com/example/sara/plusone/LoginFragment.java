@@ -22,6 +22,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
@@ -89,36 +90,46 @@ public class LoginFragment extends Fragment {
         // If using in a fragment
         loginButton.setFragment(this);
         // Other app specific specialization
-
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-
+                //TODO:App still thinks your logged in
                 mAccessToken = loginResult.getAccessToken();
+                if ( AccessToken.getCurrentAccessToken() == null){
+                    new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+                            .Callback() {
+                        @Override
+                        public void onCompleted(GraphResponse graphResponse) {
 
-                GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                try {
-                                    mName = object.getString("name");
-//                                    mProfilePic = getProfilePicture(object.getJSONObject("picture").getJSONObject("data").getString("url"));
-                                    mAge =getAge(object.getString("birthday"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                            LoginManager.getInstance().logOut();
+                            mFirebaseRef.unauth();
+                        }
+                    }).executeAsync();
+                }else {
+                    GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            try {
+                                mName = object.getString("name");
+//                                mProfilePic = getProfilePicture(object.getJSONObject("picture").getJSONObject("data").getString("url"));
+                                mAge = getAge(object.getString("birthday"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,birthday,picture");
-                parameters.putBoolean("redirect", false);
-                request.setParameters(parameters);
-                request.executeAsync();
+                        }
 
+                    });
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,birthday,picture");
+                    parameters.putBoolean("redirect", false);
+                    request.setParameters(parameters);
+                    request.executeAsync();
+                }
                 Intent i = new Intent(getContext(), MainActivity.class);
                 startActivity(i);
-                Log.d("Report","Logged in");
+                Log.d("Report", "Logged in");
             }
 
             @Override
@@ -133,8 +144,10 @@ public class LoginFragment extends Fragment {
                 // App code
             }
         });
+
         return view;
     }
+
 
     private int getAge(String birthDate){
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy",Locale.US);

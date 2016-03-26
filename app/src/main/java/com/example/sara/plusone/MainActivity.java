@@ -24,12 +24,19 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.CurrentUser;
 import com.example.sara.plusone.objects.Event;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
@@ -42,12 +49,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
     TabLayout tabLayout;
-
     public CurrentUser currentUser;
     public ArrayList<Event> events;
-
     Firebase mFirebaseRef;
-    CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +60,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Firebase.setAndroidContext(this);
-         mFirebaseRef = new Firebase(FIREBASE_URL);
+        mFirebaseRef = new Firebase(FIREBASE_URL);
+
+        AuthData authData = mFirebaseRef.getAuth();
+        if (authData != null) {
+            // user authenticated
+            Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Need to sign in", Toast.LENGTH_SHORT).show();
+            // no user authenticated
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,14 +89,17 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO fetch currentUser data here. this one is a demo
         ArrayList<Event> sampleEvents = new ArrayList<>();
-        sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-        sampleEvents.add(new Event("-1", null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-        currentUser = new CurrentUser("-1", "test", 21, null);
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+        sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
+        currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
         currentUser.setEvents(sampleEvents);
+
+        Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
+        eventRef.setValue(sampleEvents);
 
         tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
         tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
