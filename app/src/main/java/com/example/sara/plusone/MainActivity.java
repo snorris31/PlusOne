@@ -25,6 +25,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
 
+import com.example.sara.plusone.enums.EventType;
+import com.example.sara.plusone.objects.CurrentUser;
+import com.example.sara.plusone.objects.Event;
+import com.facebook.CallbackManager;
+import com.facebook.appevents.AppEventsLogger;
+import com.firebase.client.Firebase;
+
+import java.util.ArrayList;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
@@ -71,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
         sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
         sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
         sampleEvents.add(new Event("-1", null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-        currentUser = new CurrentUser("-1", "test", 21, null, sampleEvents, null);
+        currentUser = new CurrentUser("-1", "test", 21, null);
+        currentUser.setEvents(sampleEvents);
 
         tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
         tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
