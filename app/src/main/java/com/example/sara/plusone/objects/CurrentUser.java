@@ -1,5 +1,6 @@
 package com.example.sara.plusone.objects;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
@@ -12,9 +13,7 @@ public class CurrentUser extends Person {
     public ArrayList<Event> events;
     public ArrayList<Integer> notifications;
 
-    public CurrentUser(String id, String name, int age, Drawable picture, ArrayList<Event> events, ArrayList<Integer> notifications) {
-        super(id, name, age, picture);
-        this.events = events;
-        this.notifications = notifications;
+    public CurrentUser(String id, String name, int age, Bitmap picture) {
+        super(id,name, age, picture);
     }
 }
