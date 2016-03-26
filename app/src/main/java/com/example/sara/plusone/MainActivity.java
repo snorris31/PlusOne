@@ -1,6 +1,8 @@
 package com.example.sara.plusone;
 
 import android.content.Intent;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,9 +15,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TableLayout;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -49,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startEvent();
             }
         });
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -58,9 +66,14 @@ public class MainActivity extends AppCompatActivity {
         mPagerAdapter = new ScreenSlider(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
+
+        tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home_grey));
+        tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events_grey));
+        tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages_grey));
+        //TODO change based on users notification status
+        tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert_grey));
         
     }
-
 
     @Override
     protected void onResume() {
@@ -127,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 4;
         }
+    }
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -167,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
         /* Logged out of Facebook so do a logout from the Firebase app */
             mFirebaseRef.unauth();
         }
+    public void startEvent(){
+        Intent intent = new Intent(this,CreateEvent.class);
+        startActivity(intent);
     }
 }
 
