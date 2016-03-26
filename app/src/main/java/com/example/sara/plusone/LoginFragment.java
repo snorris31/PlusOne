@@ -110,37 +110,38 @@ public class LoginFragment extends Fragment {
 //            }
 //        });
 
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFirebaseRef.getAuth() == null) {
-
-                    final CountDownLatch latch = new CountDownLatch(1);
-
-                    mFirebaseRef.authAnonymously(new Firebase.AuthResultHandler() {
-                        @Override
-                        public void onAuthenticated(AuthData authData) {
-                            latch.countDown();
-                        }
-
-                        @Override
-                        public void onAuthenticationError(FirebaseError firebaseError) {
-                            throw firebaseError.toException();
-                        }
-                    });
-
-                    awaitLatch(latch);
-                }
-
-
-                Firebase userRef = new Firebase(MainActivity.FIREBASE_URL).child("users");
-                CurrentUser user = new CurrentUser(mFirebaseRef.getAuth().getUid(),"Anon",99,null);
-                Map<String,CurrentUser> userMap = new HashMap<String, CurrentUser>();
-                userMap.put(mFirebaseRef.getAuth().getUid(),user);
-                userRef.setValue(userMap);
-                getActivity().finish();
-            }
-        });
+//        logoutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mFirebaseRef.getAuth() == null) {
+//
+//                    final CountDownLatch latch = new CountDownLatch(1);
+//
+//                    mFirebaseRef.authAnonymously(new Firebase.AuthResultHandler() {
+//                        @Override
+//                        public void onAuthenticated(AuthData authData) {
+//                            latch.countDown();
+//                        }
+//
+//                        @Override
+//                        public void onAuthenticationError(FirebaseError firebaseError) {
+//                            throw firebaseError.toException();
+//                        }
+//                    });
+//
+//                    awaitLatch(latch);
+//                }
+//
+//
+//                Firebase userRef = new Firebase(MainActivity.FIREBASE_URL).child("users");
+//                String temp = mFirebaseRef.getAuth().getUid();
+//                CurrentUser user = new CurrentUser(mFirebaseRef.getAuth().getUid(), "Anon", 99, null);
+//                Map<String,CurrentUser> userMap = new HashMap<String, CurrentUser>();
+//                userMap.put(mFirebaseRef.getAuth().getUid(),user);
+//                userRef.setValue(userMap);
+//                getActivity().finish();
+//            }
+//        });
 
 
         // Other app specific specialization
@@ -190,7 +191,7 @@ public class LoginFragment extends Fragment {
 
     private void awaitLatch(CountDownLatch latch) {
         try {
-            latch.await(10, TimeUnit.SECONDS);
+            latch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
