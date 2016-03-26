@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 4;
         }
-    }
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -181,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         /* Logged out of Facebook so do a logout from the Firebase app */
             mFirebaseRef.unauth();
         }
+    }
     public void startEvent(){
         Intent intent = new Intent(this,CreateEvent.class);
         startActivity(intent);
