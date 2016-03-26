@@ -87,13 +87,11 @@ public class LoginFragment extends Fragment {
         mFirebaseRef = new Firebase(MainActivity.FIREBASE_URL);
         FacebookSdk.sdkInitialize(getContext());
         callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) view.findViewById(R.id.login_button);
-        logoutButton = (Button)view.findViewById(R.id.logout_button);
-
-        loginButton.setReadPermissions(Arrays.asList(
-                "public_profile", "email", "user_birthday", "user_friends"));
+//
+//        loginButton.setReadPermissions(Arrays.asList(
+//                "public_profile", "email", "user_birthday", "user_friends"));
         // If using in a fragment
-        loginButton.setFragment(this);
+//        loginButton.setFragment(this);
 //        logoutButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
