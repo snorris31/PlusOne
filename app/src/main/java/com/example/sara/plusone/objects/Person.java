@@ -13,11 +13,13 @@ import java.util.List;
 public class Person {
 
     public String id;
-    public ArrayList<Event> eventList;
     public String name;
     public int age;
     public Bitmap picture;
 
+    public Person(){
+
+    }
     public Person(String name, int age, Bitmap picture) {
         this("-1", name, age, picture);
     }

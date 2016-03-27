@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="5dp">
+    android:paddingTop="5dp"
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp">
 
     <TextView
         android:id="@+id/title"
         android:textSize="20sp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/garbage_icon"
-        android:layout_toStartOf="@id/garbage_icon"
+        android:layout_toLeftOf="@+id/request_button"
+        android:layout_toStartOf="@id/request_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <ImageView
-        android:id="@id/garbage_icon"
+        android:id="@+id/garbage_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
@@ -32,6 +34,19 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:clickable="true"/>
+
+    <Button
+        android:id="@+id/request_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:background="@color/transparent"
+        android:text="Request"/>
 
     <TextView
         android:id="@+id/time"

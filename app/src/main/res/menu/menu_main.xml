@@ -2,6 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.sara.plusone.MainActivity">
+
+    <item
+        android:id="@+id/search"
+        android:orderInCategory="1"
+        android:title="Search"
+        android:icon="@drawable/search"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -11,6 +19,11 @@
         android:id="@+id/login_page"
         android:orderInCategory="100"
         android:title="Login"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/signOut"
+        android:orderInCategory="100"
+        android:title="SignOut"
         app:showAsAction="never" />
 
 </menu>

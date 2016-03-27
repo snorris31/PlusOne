@@ -7,10 +7,24 @@
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#727272</color>
 
-    <color name="red">#e8c0c0</color>
-    <color name="yellow">#e8e8c0</color>
-    <color name="green">#c0e8c0</color>
-    <color name="cyan">#c0e8e8</color>
-    <color name="blue">#c0c0e8</color>
-    <color name="grey">#d4d4d4</color>
+    <color name="red">#f2d9d9</color>
+    <color name="yellow">#f2f2d9</color>
+    <color name="green">#d9f2d9</color>
+    <color name="cyan">#d9f2f2</color>
+    <color name="blue">#d9d9f2</color>
+    <color name="purple">#f2d9f2</color>
+    <color name="grey">#d9d9d9</color>
+
+
+
+    <color name="white_smoke">#F7F7F7</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="main_color_green">#00b863</color>
+    <color name="main_color_gray_dk">#3b3b3b</color>
+    <color name="main_color_gray_lt">#acacac</color>
+    <color name="main_color_gray">#7d7d7d</color>
+    <color name="gray_light">#e8e8e8</color>
 </resources>
