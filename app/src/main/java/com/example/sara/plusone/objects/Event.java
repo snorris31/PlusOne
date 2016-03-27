@@ -15,7 +15,7 @@ import java.util.TimeZone;
 /**
  * Created by Zack on 3/25/2016.
  */
-public class Event {
+public class Event{
 
     @JsonIgnore
     private long timestamp;

@@ -35,7 +35,10 @@ import com.firebase.client.FirebaseError;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -186,7 +189,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         });
     }
 
-        @Override
+    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final Holder holder;
         final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -327,6 +330,18 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         filteredList.add(event);
                     }
                 }
+
+                Collections.sort(filteredList, new Comparator<Event>() {
+                    @Override
+                    public int compare(Event lhs, Event rhs) {
+                        if (lhs.date.before(rhs.date)) {
+                            return -1;
+                        } else if (lhs.date.after(rhs.date)) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                });
 
                 results.count = filteredList.size();
                 results.values = filteredList;
