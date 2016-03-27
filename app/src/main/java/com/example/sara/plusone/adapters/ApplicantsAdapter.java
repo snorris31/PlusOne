@@ -66,11 +66,12 @@ public class ApplicantsAdapter extends ArrayAdapter<String> {
             holder.accept = (Button)convertView.findViewById(R.id.accept_button);
             holder.deny = (Button)convertView.findViewById(R.id.deny_button);
 
+            convertView.setTag(holder);
         } else {
             holder = (Holder)convertView.getTag();
         }
-        final Person applicant = applicants.get(position);
-        holder.name.setText(applicant.getName() + ", " + applicant.getAge());
+        Person applicant = applicants.size() >= position ? null : applicants.get(position);
+        holder.name.setText(applicant == null ? "Unknown" : applicant.getName() + ", " + applicant.getAge());
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +96,6 @@ public class ApplicantsAdapter extends ArrayAdapter<String> {
                 holder.accept.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                 holder.accept.setClickable(false);
 
-                applicantIDs.remove(applicant.getUid());
             }
         });
 
