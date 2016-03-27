@@ -40,7 +40,7 @@ public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
-                TextView senderName = (TextView) v.findViewById(R.id.sender_name);
+                TextView senderName = (TextView) v.findViewById(R.id.personName);
                 senderName.setText(userInfo.get("name"));
             }
 
@@ -50,7 +50,7 @@ public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
             }
         });
 
-        ((TextView)v.findViewById(R.id.message_content)).setText(model.getMessage());
+//        ((TextView)v.findViewById(R.id.age)).setText(model.getMessage());
 
     }
 }

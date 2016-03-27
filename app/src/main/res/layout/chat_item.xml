@@ -11,7 +11,7 @@
 
     <!-- View for the message content-->
     <TextView
-        android:id="@+id/message_content"
+        android:id="@+id/personName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Message Content"
@@ -23,7 +23,7 @@
 
     <!-- View for the senders name-->
     <TextView
-        android:id="@+id/sender_name"
+        android:id="@+id/sender_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sender Name"
