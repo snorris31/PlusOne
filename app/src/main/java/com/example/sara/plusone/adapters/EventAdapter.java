@@ -339,7 +339,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         if (lhs.date.before(rhs.date)) {
                             return isHomePage ? -1 : 1;
                         } else if (lhs.date.after(rhs.date)) {
-                            return isHomePage ? 1 : -1;;
+                            return isHomePage ? 1 : -1;
                         }
                         return 0;
                     }

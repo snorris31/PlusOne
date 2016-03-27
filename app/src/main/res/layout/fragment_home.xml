@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:textSize="20sp"
-        android:text="Your events"/>
+        android:text="Your Events"/>
 
     <View
         android:id="@+id/divider"
