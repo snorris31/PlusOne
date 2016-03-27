@@ -5,8 +5,8 @@
         <item>Concert</item>
         <item>Movie</item>
         <item>Gym</item>
-        <item>Outdoors</item>
-        <item>Greek Event</item>
+        <item>Party</item>
+        <item>Greek</item>
         <item>Other</item>
     </string-array>
     <!--<string-array name="timeHour">

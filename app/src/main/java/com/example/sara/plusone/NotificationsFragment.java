@@ -34,6 +34,7 @@ public class NotificationsFragment extends Fragment {
         notifications.add(new Notification("-1","-1","-1","-1","this is the description of a notification", true));
         adapter = new NotificationAdapter(getActivity(), R.layout.notification_segment, notifications);
         listView.setAdapter(adapter);
+
         return view;
     }
 }
