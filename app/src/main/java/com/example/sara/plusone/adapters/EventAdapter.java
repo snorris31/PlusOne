@@ -250,6 +250,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         //TODO submit application for this event, notify creator
                         originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(userID);
                         holder.requestButton.setText("Submitted");
+                        Notification notification = new Notification(event.creatorID, "Someone wants to join you!",)
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
                         Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
@@ -262,7 +263,6 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         }
 
         holder.title.setLayoutParams(params);
-
         holder.layout.setBackgroundColor(context.getResources().getColor(EventType.fromString(event.type).getColorID()));
         holder.title.setText(event.title + ": " + event.type.toString());
         holder.time.setText(SimpleDateFormat.getDateTimeInstance().format(event.date));
