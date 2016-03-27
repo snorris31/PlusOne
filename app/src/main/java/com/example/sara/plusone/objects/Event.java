@@ -47,17 +47,16 @@ public class Event {
     }
 
 
-    public Map<String,String> getDate(){
-        return ServerValue.TIMESTAMP;
-    }
+//    public Map<String,String> getDate(){
+//        return ServerValue.TIMESTAMP;
+//    }
 
-    @JsonIgnore
-    public Date getDateObject(){
-        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = GregorianCalendar.getInstance(tz);
-        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-
-        timestamp -= offsetInMillis;
+    public Date getDate(){
+//        TimeZone tz = TimeZone.getDefault();
+//        Calendar cal = GregorianCalendar.getInstance(tz);
+//        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
+//
+//        timestamp -= offsetInMillis;
         return new Date(timestamp);
 
     }
