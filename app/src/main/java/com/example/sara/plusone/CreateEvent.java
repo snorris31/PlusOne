@@ -102,17 +102,22 @@ public class CreateEvent extends AppCompatActivity {
                 int mYear = c.get(Calendar.YEAR);
                 int mMonth = c.get(Calendar.MONTH);
                 int mDay = c.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog dialog = new DatePickerDialog(CreateEvent.this,
+                final DatePickerDialog dialog = new DatePickerDialog(CreateEvent.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                int mYear = year;
-                                int mMonth = monthOfYear;
-                                int mDay = dayOfMonth;
-                                datePicker.setText(new StringBuilder()
-                                        // Month is 0 based so add 1
-                                        .append(mMonth + 1).append("/").append(mDay).append("/")
-                                        .append(mYear).append(" "));
+                                int mYear = view.getYear();
+                                int mMonth = view.getMonth();
+                                int mDay = view.getDayOfMonth();
+//                                datePicker.setText(new StringBuilder()
+//                                        // Month is 0 based so add 1
+//                                        .append(mMonth + 1).append("/").append(mDay).append("/")
+//                                        .append(mYear).append(" "));
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(mYear, mMonth+1, mDay);
+
+                                Date testDate =  calendar.getTime();
+                                finalDate = testDate;
                             }
                         }, mYear, mMonth, mDay);
                 dialog.show();
@@ -144,13 +149,13 @@ public class CreateEvent extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> arg0) { }
         });
 
-        dateEvent = findViewById(R.id.display_date);
-        newDate = new SimpleDateFormat("MM/dd/yyyy");
-        try {
-            finalDate = newDate.parse(Integer.toString(mMonth)+"/"+Integer.toString(mDay)+"/"+Integer.toString(mYear));
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        dateEvent = findViewById(R.id.display_date);
+//        newDate = new SimpleDateFormat("MM/dd/yyyy");
+//        try {
+//            finalDate = newDate.parse(Integer.toString(mMonth)+"/"+Integer.toString(mDay)+"/"+Integer.toString(mYear));
+//        }catch (ParseException e) {
+//            e.printStackTrace();
+//        }
         nameEvent = (EditText) findViewById(R.id.eventTitle);
         descriptionEvent = (EditText) findViewById(R.id.editText);
         eventType = (Spinner)findViewById(R.id.eventType);
