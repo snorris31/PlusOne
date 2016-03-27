@@ -10,12 +10,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.sara.plusone.MessgingActivity"
+    tools:context=".ChatApplication"
     tools:showIn="@layout/activity_messging">
 
     <!-- Will display all of the Chat messages-->
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/chat_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -37,7 +37,6 @@
         <!-- Where the message is put-->
         <EditText
             android:id="@+id/sending_messages"
-            style="@style/edittext_msg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -48,10 +47,9 @@
         <!-- Button that will be used to send the message.-->
         <Button
             android:id="@+id/btnSend"
-            style="@style/btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_send" />
+            />
 
     </LinearLayout>
 

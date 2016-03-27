@@ -2,6 +2,7 @@ package com.example.sara.plusone;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ public class MessagesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFirebaseRef = new Firebase(MainActivity.FIREBASE_URL).child("users");
@@ -72,7 +73,12 @@ public class MessagesFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent intent = new Intent(getContext(),ChatApplication.class);
+                Bundle bundle = new Bundle();
+                Person picked = (Person)parent.getItemAtPosition(position);
+                bundle.putString("uid",picked.getUid());
+                bundle.putString("name",picked.getName());
+                startActivity(intent,bundle);
             }
         });
 
@@ -103,6 +109,8 @@ public class MessagesFragment extends Fragment {
 //                    Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
                     TextView senderName = (TextView) v.findViewById(R.id.personName);
                     senderName.setText(model.name);
+//            ((TextView)v.findViewById(R.id.age_amount)).setText(model.age);
+
                 }
 
                 @Override
@@ -111,7 +119,6 @@ public class MessagesFragment extends Fragment {
                 }
             });
 
-//            ((TextView)v.findViewById(R.id.age_amount)).setText(model.age);
 
         }
 

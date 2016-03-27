@@ -258,6 +258,10 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
                         Toast.makeText(context, "Request submitted", Toast.LENGTH_SHORT).show();
+
+//                        mFirebase.child(mKeys.get(1)).setValue(originalEvents.get(originalEvents.indexOf(event)));
+//                        Firebase delete = new Firebase(MainActivity.FIREBASE_URL).child("events").child(mKeys.get(1));
+//                        delete.removeValue();
                     }
                 });
             }

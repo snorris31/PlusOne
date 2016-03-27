@@ -19,12 +19,12 @@ import java.util.Map;
 /**
  * Created by Shannor on 3/26/2016.
  */
-public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
+public class ChatAdapter extends FireBaseListAdapter<Conversation>{
     private String currentUser;
     private LayoutInflater mLayoutInflater;
     private Firebase mFireBaseRef;
 
-    public MessageingAdapter(Query ref, Activity context, int layout, String currentUser){
+    public ChatAdapter(Query ref, Activity context, int layout, String currentUser){
         super(ref,Conversation.class,layout,context);
         this.currentUser = currentUser;
         mLayoutInflater = LayoutInflater.from(context);
@@ -42,6 +42,7 @@ public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
                 Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
                 TextView senderName = (TextView) v.findViewById(R.id.personName);
                 senderName.setText(userInfo.get("name"));
+    //        ((TextView)v.findViewById(R.id.age)).setText(model.getMessage());
             }
 
             @Override
@@ -50,7 +51,6 @@ public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
             }
         });
 
-//        ((TextView)v.findViewById(R.id.age)).setText(model.getMessage());
 
     }
 }
