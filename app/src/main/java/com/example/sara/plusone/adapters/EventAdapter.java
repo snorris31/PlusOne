@@ -335,9 +335,9 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                     @Override
                     public int compare(Event lhs, Event rhs) {
                         if (lhs.date.before(rhs.date)) {
-                            return -1;
+                            return isHomePage ? -1 : 1;
                         } else if (lhs.date.after(rhs.date)) {
-                            return 1;
+                            return isHomePage ? 1 : -1;;
                         }
                         return 0;
                     }
