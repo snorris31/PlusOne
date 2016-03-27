@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class CurrentUser extends Person {
 
     public ArrayList<Integer> notifications;
-    private String id;
+    public String id;
 
     public CurrentUser(){
 
@@ -20,4 +20,5 @@ public class CurrentUser extends Person {
     public CurrentUser(String id, String name, int age, Bitmap picture) {
         super(id,name, age, picture);
     }
+
 }

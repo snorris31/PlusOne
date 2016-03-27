@@ -52,51 +52,52 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
     private Firebase mFirebase;
     private ArrayList<String> mKeys;
 
-    public EventAdapter(Context context, int resource, ArrayList<Event> events, boolean isHomePage) {
+    public EventAdapter(Context context, int resource, final ArrayList<Event> events, boolean isHomePage) {
         super(context, resource, events);
         this.context = context;
         this.resource = resource;
         this.events = events;
         this.originalEvents = new ArrayList<>();
         this.isHomePage = isHomePage;
+        this.mKeys = new ArrayList<>();
 
         mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
 
         mFirebase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-//                Event event = dataSnapshot.getValue(Event.class);
-                Map<String,String> eventMap = (Map<String,String>)dataSnapshot.getValue(Map.class);
-                Event event = new Event();
-                if(eventMap.containsKey("applicantIDs")){
-                    //Then load it
-                }
-                if (eventMap.containsKey("address")){
-                    event.address = eventMap.get("address");
-                }
-                if (eventMap.containsKey("completed")){
-                    event.completed =Boolean.getBoolean(eventMap.get("completed"));
-                }
-                if (eventMap.containsKey("creatorID")){
-                    event.creatorID = eventMap.get("creatorID");
-                }
-                if (eventMap.containsKey("date")){
-                    event.setTimestamp(Long.parseLong(eventMap.get("date")));
-                    event.date = event.getDateObject();
-                }
-                if (eventMap.containsKey("description")){
-                    event.description = eventMap.get("description");
-                }
-                if (eventMap.containsKey("time")){
-                    event.time = eventMap.get("time");
-                }
-                if (eventMap.containsKey("title")){
-                    event.title = eventMap.get("title");
-                }
-                if (eventMap.containsKey("type")){
-                   event.type = EventType.fromString(eventMap.get("type"));
-
-                }
+                Event event = dataSnapshot.getValue(Event.class);
+//                Map<String,String> eventMap = (Map<String,String>)dataSnapshot.getValue(Map.class);
+//                Event event = new Event();
+//                if(eventMap.containsKey("applicantIDs")){
+//                    //Then load it
+//                }
+//                if (eventMap.containsKey("address")){
+//                    event.address = eventMap.get("address");
+//                }
+//                if (eventMap.containsKey("completed")){
+//                    event.completed = Boolean.parseBoolean(eventMap.get("completed"));
+//                }
+//                if (eventMap.containsKey("creatorID")){
+//                    event.creatorID = eventMap.get("creatorID");
+//                }
+//                if (eventMap.containsKey("date")){
+//                    event.setTimestamp(Long.parseLong(eventMap.get("date")));
+//                    event.date = event.getDateObject();
+//                }
+//                if (eventMap.containsKey("description")){
+//                    event.description = eventMap.get("description");
+//                }
+//                if (eventMap.containsKey("time")){
+//                    event.time = eventMap.get("time");
+//                }
+//                if (eventMap.containsKey("title")){
+//                    event.title = eventMap.get("title");
+//                }
+//                if (eventMap.containsKey("type")){
+//                   event.setType(eventMap.get("type"));
+//
+//                }
                 String key = dataSnapshot.getKey();
 
                 // Insert into the correct location, based on previousChildName
@@ -114,7 +115,6 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         mKeys.add(nextIndex, key);
                     }
                 }
-
                 notifyDataSetChanged();
             }
 

@@ -22,7 +22,7 @@ public class Event {
 
     public String creatorID;
     public ArrayList<String> applicantIDs;
-    public EventType type;
+    public String type;
     public Date date;
     public String address;
     public String title;
@@ -77,7 +77,7 @@ public class Event {
     public String getCreatorID(){
         return this.creatorID;
     }
-    public EventType getType(){
+    public String getType(){
         return this.type;
     }
 
@@ -100,7 +100,7 @@ public class Event {
         this.applicantIDs = applicantIDs;
     }
 
-    public void setType(EventType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
