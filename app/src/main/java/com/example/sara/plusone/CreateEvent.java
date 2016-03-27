@@ -109,12 +109,12 @@ public class CreateEvent extends AppCompatActivity {
                                 int mYear = view.getYear();
                                 int mMonth = view.getMonth();
                                 int mDay = view.getDayOfMonth();
-//                                datePicker.setText(new StringBuilder()
-//                                        // Month is 0 based so add 1
-//                                        .append(mMonth + 1).append("/").append(mDay).append("/")
-//                                        .append(mYear).append(" "));
+                                datePicker.setText(new StringBuilder()
+                                        // Month is 0 based so add 1
+                                        .append(mMonth + 1).append("/").append(mDay).append("/")
+                                        .append(mYear).append(" "));
                                 Calendar calendar = Calendar.getInstance();
-                                calendar.set(mYear, mMonth+1, mDay);
+                                calendar.set(mYear, mMonth, mDay);
 
                                 Date testDate =  calendar.getTime();
                                 finalDate = testDate;
