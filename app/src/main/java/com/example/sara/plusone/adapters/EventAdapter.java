@@ -65,7 +65,35 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 //                Event event = dataSnapshot.getValue(Event.class);
                 Map<String,String> eventMap = (Map<String,String>)dataSnapshot.getValue(Map.class);
                 Event event = new Event();
+                if(eventMap.containsKey("applicantIDs")){
+                    //Then load it
+                }
+                if (eventMap.containsKey("address")){
+                    event.address = eventMap.get("address");
+                }
+                if (eventMap.containsKey("completed")){
+                    event.completed =Boolean.getBoolean(eventMap.get("completed"));
+                }
+                if (eventMap.containsKey("creatorID")){
+                    event.creatorID = eventMap.get("creatorID");
+                }
+                if (eventMap.containsKey("date")){
+                    event.setTimestamp(Long.parseLong(eventMap.get("date")));
+                    event.date = event.getDateObject();
+                }
+                if (eventMap.containsKey("description")){
+                    event.description = eventMap.get("description");
+                }
+                if (eventMap.containsKey("time")){
+                    event.time = eventMap.get("time");
+                }
+                if (eventMap.containsKey("title")){
+                    event.title = eventMap.get("title");
+                }
+                if (eventMap.containsKey("type")){
+                   event.type = EventType.fromString(eventMap.get("type"));
 
+                }
                 String key = dataSnapshot.getKey();
 
                 // Insert into the correct location, based on previousChildName
