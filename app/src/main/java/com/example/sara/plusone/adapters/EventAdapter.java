@@ -111,7 +111,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
-                    if (nextIndex == originalEvents.size()) {
+                    if (nextIndex >= originalEvents.size()) {
                         originalEvents.add(event);
                         mKeys.add(key);
                     } else {
@@ -130,7 +130,9 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 Event newModel = dataSnapshot.getValue(Event.class);
                 int index = mKeys.indexOf(key);
 
-                originalEvents.set(index, newModel);
+                if (index < originalEvents.size()) {
+                    originalEvents.set(index, newModel);
+                }
 
                 Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
                 thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
@@ -239,7 +241,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             if (userID.equals(event.creatorID)) {
                 holder.requestButton.setVisibility(View.GONE);
                 holder.requestButton.setClickable(false);
-            } else if (event.applicantIDs.contains(userID)){
+            } else if (event.applicantIDs != null && event.applicantIDs.contains(userID)){
                 holder.requestButton.setText("Submitted");
                 holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                 holder.requestButton.setClickable(false);
@@ -248,11 +250,14 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                     @Override
                     public void onClick(View v) {
                         //TODO submit application for this event, notify creator
+                        if (originalEvents.get(originalEvents.indexOf(event)).applicantIDs == null) {
+                            originalEvents.get(originalEvents.indexOf(event)).applicantIDs = new ArrayList<>();
+                        }
                         originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(userID);
                         holder.requestButton.setText("Submitted");
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
-                        Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Request submitted", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

@@ -64,8 +64,8 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("Test", "User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                         Map<String,String> tempMap = new HashMap<String, String>();
                         tempMap.put("uid",temp);
-                        tempMap.put("name","Shannor");
-                        tempMap.put("age","21");
+                        tempMap.put("name","Zack");
+                        tempMap.put("age","20");
                         mFirebase.child("users").child(temp).setValue(tempMap);
                     }
 
