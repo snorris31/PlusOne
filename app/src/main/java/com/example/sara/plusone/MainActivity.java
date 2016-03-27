@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +40,7 @@ import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.CurrentUser;
 import com.example.sara.plusone.objects.Event;
 import com.example.sara.plusone.objects.Search;
+import com.example.sara.plusone.objects.SharedPrefWrapper;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.GraphRequest;
@@ -47,8 +49,10 @@ import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     public CurrentUser currentUser;
     public ArrayList<Event> events;
     Firebase mFirebaseRef;
+    SharedPrefWrapper mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Firebase.setAndroidContext(this);
         mFirebaseRef = new Firebase(FIREBASE_URL);
+        mSharedPref = new SharedPrefWrapper(this);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -96,14 +103,27 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
         tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
         tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        latch.countDown();
+        awaitLatch(latch);
         AuthData authData = mFirebaseRef.getAuth();
         //Person is logged out
         if (authData == null){
+            mSharedPref.logoutUser();
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent, 1);
         }
     }
 
+
+    private void awaitLatch(CountDownLatch latch) {
+        try {
+            latch.await(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -193,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if( id == R.id.signOut){
             mFirebaseRef.unauth();
+            mSharedPref.logoutUser();
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent, 1);
         }

@@ -12,6 +12,7 @@ public class CurrentUser extends Person {
 
     public ArrayList<Integer> notifications;
     public String id;
+    private String name;
 
     public CurrentUser(){
 
