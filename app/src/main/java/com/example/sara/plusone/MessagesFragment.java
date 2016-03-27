@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -64,7 +65,13 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onChanged() {
                 super.onChanged();
-                listView.setSelection(adapter.getCount() -1);
+                listView.setSelection(adapter.getCount() - 1);
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
             }
         });
 
@@ -87,15 +94,14 @@ public class MessagesFragment extends Fragment {
 
 
         @Override
-        protected void populateView(final View v, Person model) {
-            String sender = model.id;
+        protected void populateView(final View v, final Person model) {
             //Pulls the user name from FireBase
             mFireBaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
+//                    Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
                     TextView senderName = (TextView) v.findViewById(R.id.personName);
-                    senderName.setText(userInfo.get("name"));
+                    senderName.setText(model.name);
                 }
 
                 @Override
@@ -104,10 +110,10 @@ public class MessagesFragment extends Fragment {
                 }
             });
 
-            ((TextView)v.findViewById(R.id.sender_age)).setText(model.age);
+//            ((TextView)v.findViewById(R.id.age_amount)).setText(model.age);
 
-            //TODO:Add timestamps to messages. Look at the Conversation class.
         }
+
     }
 }
 

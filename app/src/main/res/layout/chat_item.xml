@@ -23,10 +23,10 @@
 
     <!-- View for the senders name-->
     <TextView
-        android:id="@+id/sender_age"
+        android:id="@+id/age_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sender Name"
+        android:text="Sender Age"
         android:textColor="@color/white"
         android:layout_gravity="right" />
 </LinearLayout>

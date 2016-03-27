@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Person {
 
-    public String id;
+    public String uid;
     public String name;
     public int age;
     @JsonIgnore
@@ -27,8 +27,8 @@ public class Person {
         this("-1", name, age, picture);
     }
 
-    public Person(String id, String name, int age, Bitmap picture) {
-        this.id = id;
+    public Person(String uid, String name, int age, Bitmap picture) {
+        this.uid = uid;
         this.name = name;
         this.age = age;
         this.picture = picture;
@@ -42,12 +42,12 @@ public class Person {
         this.age = age;
     }
 
-    public String getId() {
-        return id;
+    public String getUid() {
+        return uid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUid(String id) {
+        this.uid = id;
     }
 
     public String getName() {
