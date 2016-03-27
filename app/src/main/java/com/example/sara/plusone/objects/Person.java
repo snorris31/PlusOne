@@ -17,6 +17,9 @@ public class Person {
     public int age;
     public Bitmap picture;
 
+    public Person(){
+
+    }
     public Person(String name, int age, Bitmap picture) {
         this("-1", name, age, picture);
     }

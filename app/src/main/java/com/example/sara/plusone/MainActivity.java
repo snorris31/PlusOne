@@ -60,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static String FIREBASE_URL = "https://plusjuan.firebaseio.com/";
+    public static CurrentUser gUser = null;
 
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
@@ -91,29 +92,34 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mPager);
         events = new ArrayList<>();
 
+        tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
+        tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
+        tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
+        //TODO change based on users notification status
+        tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
         AuthData authData = mFirebaseRef.getAuth();
         if (authData != null) {
             //TODO fetch all events from database
 
-            //TODO fetch currentUser data here. this one is a demo
+//            //TODO fetch currentUser data here. this one is a demo
             ArrayList<Event> sampleEvents = new ArrayList<>();
-        /*    sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), EventType.GREEK, new Date(0), "address", "Title", "description", false));
+
+           /* sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), EventType.GREEK, new Date(0), "address", "Title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
             sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));*/
             currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
 
+            events = sampleEvents;
+
             Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
             eventRef.setValue(sampleEvents);
 
-            tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
-            tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
-            tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
-            //TODO change based on users notification status
-            tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
-            // user authenticated
+//             user authenticated
             Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
         } else {
 //            Intent intent = new Intent(this,LoginActivity.class);
@@ -193,10 +199,10 @@ public class MainActivity extends AppCompatActivity {
                     final LayoutInflater inflater = context.getLayoutInflater();
                     View detailView = inflater.inflate(R.layout.fragment_search_options, null);
 
-                    matchingField = (EditText)detailView.findViewById(R.id.matching_field);
+                    matchingField = (EditText) detailView.findViewById(R.id.matching_field);
                     matchingField.setText(currentSearch.textMatch);
 
-                    eventTypeField = (Spinner)detailView.findViewById(R.id.event_type_field);
+                    eventTypeField = (Spinner) detailView.findViewById(R.id.event_type_field);
                     ArrayList<String> adjustedArray = EventType.asArrayList();
                     adjustedArray.add(0, "Any");
                     eventTypeField.setAdapter(new ArrayAdapter<>(context, R.layout.spinner_item, R.id.view, adjustedArray));
@@ -207,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             currentSearch.textMatch = matchingField.getText().toString();
-                            currentSearch.eventType = (String)eventTypeField.getSelectedItem();
+                            currentSearch.eventType = (String) eventTypeField.getSelectedItem();
                             //TODO currentSearch.latLong = something
 
                             String constraint = currentSearch.textMatch + "~" + currentSearch.eventType;
@@ -242,6 +248,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent, 1);
         }
+        if( id == R.id.signOut){
+            mFirebaseRef.unauth();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -268,21 +277,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Home";
-                case 1:
-                    return "Events";
-                case 2:
-                    return "Messages";
-                case 3:
-                    return "Notifications";
-            }
-            return null;
         }
     }
 
