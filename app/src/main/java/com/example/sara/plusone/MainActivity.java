@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
 //            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
 //            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
 //            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
-
 //            events = sampleEvents;
 
             Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
