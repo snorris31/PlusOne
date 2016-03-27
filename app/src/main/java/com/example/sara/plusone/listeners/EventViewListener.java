@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.objects.Event;
+import com.firebase.client.Firebase;
 
 import java.text.SimpleDateFormat;
 
@@ -61,7 +62,8 @@ public class EventViewListener implements View.OnClickListener {
         descriptionField = (TextView)detailView.findViewById(R.id.description_field);
         descriptionField.setText(event.description);
 
-        if (((MainActivity)context).currentUser.id.equals(event.creatorID) && !event.applicantIDs.isEmpty()) {
+        String userID = (new Firebase(MainActivity.FIREBASE_URL)).getAuth().getUid();
+        if (userID.equals(event.creatorID) && event.applicantIDs != null && !event.applicantIDs.isEmpty()) {
             viewResponses = (Button)detailView.findViewById(R.id.view_responses);
 
             viewResponses.setVisibility(View.VISIBLE);
