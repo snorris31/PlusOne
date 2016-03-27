@@ -102,14 +102,16 @@ public class MainActivity extends AppCompatActivity {
             //TODO fetch all events from database
 
 //            //TODO fetch currentUser data here. this one is a demo
-//            ArrayList<Event> sampleEvents = new ArrayList<>();
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-//            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
+            ArrayList<Event> sampleEvents = new ArrayList<>();
+            sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
+            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
+            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
+
+            events = sampleEvents;
 
             Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
             eventRef.setValue(sampleEvents);
@@ -272,21 +274,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Home";
-                case 1:
-                    return "Events";
-                case 2:
-                    return "Messages";
-                case 3:
-                    return "Notifications";
-            }
-            return null;
         }
     }
 

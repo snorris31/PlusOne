@@ -14,13 +14,12 @@ public enum EventType {
     FOOD, CONCERT, GREEK, PARTY, GYM, MOVIE, OTHER;
 
     public static ArrayList<String> asArrayList() {
-
         String[] array = {FOOD.toString(), CONCERT.toString(), GREEK.toString(), PARTY.toString(), GYM.toString(), MOVIE.toString(), OTHER.toString()};
         return new ArrayList<>(Arrays.asList(array));
     }
 
-    public static int getColor(EventType type) {
-        switch(type) {
+    public int getColorID() {
+        switch(this) {
             case FOOD: return R.color.purple;
             case CONCERT: return R.color.cyan;
             case GREEK: return R.color.yellow;

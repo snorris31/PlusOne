@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.provider.CalendarContract;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sara.plusone.EventsFragment;
+import com.example.sara.plusone.HomeFragment;
 import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.enums.EventType;
@@ -52,75 +55,17 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Holder holder;
+        final Holder holder;
         final LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        final Event event = events.get(position);
 
         if(convertView == null) {
             convertView = inflater.inflate(resource, parent, false);
-
             holder = new Holder();
-            final EventAdapter thisInstance = this;
 
             holder.layout = (RelativeLayout)convertView.findViewById(R.id.layout);
-
             holder.title = (TextView)convertView.findViewById(R.id.title);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.title.getLayoutParams());
-
-            holder.garbageIcon = (ImageView)convertView.findViewById(R.id.garbage_icon);
-            holder.requestButton = (Button)convertView.findViewById(R.id.request_button);
-            if (isHomePage) {
-                params.addRule(RelativeLayout.LEFT_OF, R.id.garbage_icon);
-
-                holder.garbageIcon.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Are you sure you want to delete this event?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //TODO delete event from database
-                                originalEvents.remove(events.get(position));
-                                events.remove(position);
-                                thisInstance.notifyDataSetChanged();
-                                Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
-                            }
-                        }).setNegativeButton("No", null).show();
-                    }
-                });
-
-                holder.requestButton.setVisibility(View.GONE);
-                holder.requestButton.setClickable(false);
-            } else {
-                params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
-
-                if (((MainActivity)context).currentUser.id.equals(events.get(position).creatorID)) {
-                    holder.requestButton.setVisibility(View.GONE);
-                    holder.requestButton.setClickable(false);
-                } else if (events.get(position).applicantIDs.contains(((MainActivity)context).currentUser.id)){
-                    holder.requestButton.setBackgroundColor(0x727272);
-                    holder.requestButton.setText("Submitted");
-                    holder.requestButton.setClickable(false);
-                } else {
-                    holder.requestButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //TODO submit application for this event, notify creator
-                            originalEvents.get(originalEvents.indexOf(events.get(position))).applicantIDs.add(((MainActivity) context).currentUser.id);
-                            events.get(position).applicantIDs.add(((MainActivity) context).currentUser.id);
-                            thisInstance.notifyDataSetChanged();
-                            Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                holder.garbageIcon.setVisibility(View.GONE);
-                holder.garbageIcon.setClickable(false);
-            }
-
-            holder.title.setLayoutParams(params);
-
             holder.time = (TextView)convertView.findViewById(R.id.time);
-
             holder.description = (TextView)convertView.findViewById(R.id.description);
 
             convertView.setTag(holder);
@@ -128,8 +73,65 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             holder = (Holder)convertView.getTag();
         }
 
-        final Event event = events.get(position);
-        holder.layout.setBackgroundColor(EventType.getColor(event.type));
+        final EventAdapter thisInstance = this;
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.title.getLayoutParams());
+
+        holder.garbageIcon = (ImageView)convertView.findViewById(R.id.garbage_icon);
+        holder.requestButton = (Button)convertView.findViewById(R.id.request_button);
+        if (isHomePage) {
+            params.addRule(RelativeLayout.LEFT_OF, R.id.garbage_icon);
+
+            holder.garbageIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Are you sure you want to delete this event?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //TODO delete event from database
+                            originalEvents.remove(event);
+                            Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                            thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
+                            Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    }).setNegativeButton("No", null).show();
+                }
+            });
+
+            holder.requestButton.setVisibility(View.GONE);
+            holder.requestButton.setClickable(false);
+        } else {
+            params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
+
+            if (((MainActivity)context).currentUser.id.equals(event.creatorID)) {
+                holder.requestButton.setVisibility(View.GONE);
+                holder.requestButton.setClickable(false);
+            } else if (event.applicantIDs.contains(((MainActivity)context).currentUser.id)){
+                holder.requestButton.setText("Submitted");
+                holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                holder.requestButton.setClickable(false);
+            } else {
+                holder.requestButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO submit application for this event, notify creator
+                        originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(((MainActivity) context).currentUser.id);
+                        holder.requestButton.setText("Submitted");
+                        holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
+                        holder.requestButton.setClickable(false);
+                        Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            holder.garbageIcon.setVisibility(View.GONE);
+            holder.garbageIcon.setClickable(false);
+        }
+
+        holder.title.setLayoutParams(params);
+
+        holder.layout.setBackgroundColor(context.getResources().getColor(event.type.getColorID()));
         holder.title.setText(event.title + ": " + event.type.toString());
         holder.time.setText(SimpleDateFormat.getDateTimeInstance().format(event.date));
         holder.description.setText(event.description);
