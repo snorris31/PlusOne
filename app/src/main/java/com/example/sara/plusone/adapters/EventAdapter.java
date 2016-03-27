@@ -22,10 +22,12 @@ import android.widget.Toast;
 import com.example.sara.plusone.EventsFragment;
 import com.example.sara.plusone.HomeFragment;
 import com.example.sara.plusone.MainActivity;
+import com.example.sara.plusone.NotificationsFragment;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.listeners.EventViewListener;
 import com.example.sara.plusone.objects.Event;
+import com.example.sara.plusone.objects.Notification;
 import com.example.sara.plusone.objects.Search;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -64,6 +66,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         this.originalEvents = new ArrayList<>();
         this.isHomePage = isHomePage;
         this.mKeys = new ArrayList<>();
+
 
         mFirebaseUID = new Firebase(MainActivity.FIREBASE_URL);
         mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
@@ -270,9 +273,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         }
 
         holder.title.setLayoutParams(params);
-
         holder.layout.setBackgroundColor(context.getResources().getColor(EventType.fromString(event.type).getColorID()));
-        holder.title.setText(event.title + ": " + event.type.toString());
+            holder.title.setText(event.title + ": " + event.type.toString());
         holder.time.setText(SimpleDateFormat.getDateTimeInstance().format(event.date));
         holder.description.setText(event.description);
 

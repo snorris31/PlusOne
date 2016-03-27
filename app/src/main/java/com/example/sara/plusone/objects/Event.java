@@ -42,24 +42,14 @@ public class Event{
         this.address = address;
         this.title = title;
         this.time = time;
+        this.timestamp = date.getTime();
         this.description = description == null ? "" : description;
         this.completed = completed;
     }
 
 
-    public Map<String,String> getDate(){
-        return ServerValue.TIMESTAMP;
-    }
-
-    @JsonIgnore
-    public Date getDateObject(){
-        TimeZone tz = TimeZone.getDefault();
-        Calendar cal = GregorianCalendar.getInstance(tz);
-        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
-
-        timestamp -= offsetInMillis;
+    public Date getDate(){
         return new Date(timestamp);
-
     }
     @JsonIgnore
     public long getTimestampLong(){
