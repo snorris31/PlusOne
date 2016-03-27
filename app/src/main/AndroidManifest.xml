@@ -40,7 +40,10 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBQfwWIAGKxIpUB__g4k8LFW7efJWajO_U"/>
         <activity
             android:name=".CreateAccount"
             android:label="@string/title_activity_create_account"

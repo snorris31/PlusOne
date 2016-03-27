@@ -26,6 +26,7 @@ public class Event {
     public Date date;
     public String address;
     public String title;
+    public String time;
     public String description;
     public boolean completed;
 
@@ -33,13 +34,14 @@ public class Event {
         //Default constructor for Firebase
     }
 
-    public Event(String creatorID, ArrayList<String> applicantIDs, EventType type, Date date, String address, String title, String description, boolean completed) {
+    public Event(String creatorID, ArrayList<String> applicantIDs, String type, Date date, String address, String time, String title, String description, boolean completed) {
         this.creatorID = creatorID;
         this.applicantIDs = applicantIDs == null ? new ArrayList<String>() : applicantIDs;
         this.type = type;
         this.date = date;
         this.address = address;
         this.title = title;
+        this.time = time;
         this.description = description == null ? "" : description;
         this.completed = completed;
     }

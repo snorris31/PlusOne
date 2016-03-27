@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
     private class ScreenSlider extends FragmentStatePagerAdapter {
         public ScreenSlider(FragmentManager fm) {
             super(fm);
-        }
+        };
 
         @Override
         public Fragment getItem(int position) {
@@ -222,21 +222,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Home";
-                case 1:
-                    return "Events";
-                case 2:
-                    return "Messages";
-                case 3:
-                    return "Notifications";
-            }
-            return null;
         }
     }
 

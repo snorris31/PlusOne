@@ -11,7 +11,17 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.sara.plusone.CreateEvent"
     tools:showIn="@layout/activity_create_event">
-
+    <fragment
+        android:id="@+id/pick_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        tools:layout="@layout/place_autocomplete_fragment"
+        android:layout_below="@+id/pick_date"
+        android:layout_alignRight="@+id/pick_date"
+        android:layout_alignEnd="@+id/pick_date"
+        android:layout_alignLeft="@+id/pick_date"
+        android:layout_alignStart="@+id/pick_date" />
     <TextView
         android:id="@+id/lbl_eventTitle"
         android:layout_width="wrap_content"
@@ -32,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/event_type"/>
+        android:text="Event Type"/>
     <Spinner
         android:layout_below="@+id/lbl_event_type"
         android:id="@+id/eventType"
@@ -49,7 +59,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set the Time of Event"
+        android:text="Event Time"
         android:id="@+id/display_time"
         android:layout_alignBaseline="@+id/pick_time"
         android:layout_alignBottom="@+id/pick_time"
@@ -62,12 +72,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/eventType"
         android:layout_alignRight="@+id/eventType"
-        android:layout_alignEnd="@+id/eventType" />
+        android:layout_alignEnd="@+id/eventType"
+        android:layout_alignLeft="@+id/pick_date"
+        android:layout_alignStart="@+id/pick_date" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pick the End Date"
+        android:text="Event Date"
         android:id="@+id/display_date"
         android:layout_below="@+id/display_time"
         android:layout_alignParentLeft="true"
@@ -80,78 +92,57 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pick_time"
-        android:layout_toRightOf="@+id/lbl_event_type"
-        android:layout_toEndOf="@+id/lbl_event_type" />
-    <!--<TextView-->
-        <!--android:layout_below="@+id/eventType"-->
-        <!--android:id="@+id/lbl_event_time"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-        <!--android:text="@string/event_time" />-->
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <!--<Spinner-->
-        <!--android:layout_width="60dp"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:id="@+id/hourSpinner"-->
-        <!--android:clickable="true"-->
-        <!--android:entries="@array/timeHour"-->
-        <!--android:layout_below="@+id/lbl_event_time"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_marginTop="18dp" />-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Location"
+        android:id="@+id/location"
+        android:layout_alignTop="@+id/pick_location"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-    <!--<Spinner-->
-        <!--android:layout_width="60dp"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:id="@+id/spinner"-->
-        <!--android:clickable="true"-->
-        <!--android:entries="@array/timeMinutes"-->
-        <!--android:layout_marginLeft="15dp"-->
-        <!--android:layout_marginStart="15dp"-->
-        <!--android:layout_alignBaseline="@+id/hourSpinner"-->
-        <!--android:layout_alignBottom="@+id/hourSpinner"-->
-        <!--android:layout_toRightOf="@+id/timeColon"-->
-        <!--android:layout_toEndOf="@+id/timeColon" />-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Event Description"
+        android:id="@+id/eventDescription"
+        android:layout_below="@+id/pick_location"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-    <!--<TextView-->
-        <!--android:layout_width="15dp"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-        <!--android:text=":"-->
-        <!--android:id="@+id/timeColon"-->
-        <!--android:layout_alignBottom="@+id/hourSpinner"-->
-        <!--android:layout_toRightOf="@+id/hourSpinner"-->
-        <!--android:layout_toEndOf="@+id/hourSpinner" />-->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_below="@+id/eventDescription"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <!--<Spinner-->
-        <!--android:layout_width="80dp"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:id="@+id/timeOfDay"-->
-        <!--android:layout_alignBottom="@+id/spinner"-->
-        <!--android:layout_toRightOf="@+id/spinner"-->
-        <!--android:layout_toEndOf="@+id/spinner"-->
-        <!--android:layout_marginLeft="26dp"-->
-        <!--android:layout_marginStart="26dp"-->
-        <!--android:entries="@array/timeOfDay" />-->
-    
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit Event"
+        android:id="@+id/submit_event"
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true" />
 
-    <!--    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:ems="10"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/eventTime"
-            android:layout_below="@+id/lbl_event_time"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />-->
-
-    <!--<EditText-->
-            <!--android:id="@+id/eventLocation"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="@string/event_location"-->
-            <!--android:inputType="text" />-->
+    <!--  <Button
+          style="?android:attr/buttonStyleSmall"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Pick Location"
+          android:id="@+id/pick_location"
+          android:layout_below="@+id/pick_date"
+          android:layout_alignLeft="@+id/pick_date"
+          android:layout_alignStart="@+id/pick_date" />-->
 
 </RelativeLayout>

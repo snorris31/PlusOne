@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class CurrentUser extends Person {
 
     public ArrayList<Integer> notifications;
+    private String id;
 
     public CurrentUser(){
 

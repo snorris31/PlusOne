@@ -5,8 +5,10 @@ import android.content.Context;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.sara.plusone.MainActivity;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.objects.Event;
 
@@ -23,6 +25,8 @@ public class EventViewListener implements View.OnClickListener {
     TextView dateField;
     TextView addressField;
     TextView descriptionField;
+
+    Button viewResponses;
 
     private LayoutInflater inflater;
     private Event event;
@@ -56,6 +60,18 @@ public class EventViewListener implements View.OnClickListener {
 
         descriptionField = (TextView)detailView.findViewById(R.id.description_field);
         descriptionField.setText(event.description);
+
+        if (((MainActivity)context).currentUser.id.equals(event.creatorID) && !event.applicantIDs.isEmpty()) {
+            viewResponses = (Button)detailView.findViewById(R.id.view_responses);
+
+            viewResponses.setVisibility(View.VISIBLE);
+            viewResponses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO display users who have applied for this shit
+                }
+            });
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Event details").setView(detailView).show();
