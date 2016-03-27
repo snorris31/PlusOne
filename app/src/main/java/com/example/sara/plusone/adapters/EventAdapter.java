@@ -216,33 +216,42 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.title.getLayoutParams());
 
+        final String userID = mFirebaseUID.getAuth().getUid();
+
         holder.garbageIcon = (ImageView)convertView.findViewById(R.id.garbage_icon);
         holder.requestButton = (Button)convertView.findViewById(R.id.request_button);
         if (isHomePage) {
             params.addRule(RelativeLayout.LEFT_OF, R.id.garbage_icon);
 
-            holder.garbageIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Are you sure you want to delete this event?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //TODO delete event from database
-                            originalEvents.remove(event);
-                            Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
-                            thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
-                            Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
-                        }
-                    }).setNegativeButton("No", null).show();
-                }
-            });
+            if (event.creatorID.equals(userID)) {
+                holder.garbageIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Are you sure you want to delete this event?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int eventPosition = originalEvents.indexOf(event);
+                                originalEvents.remove(eventPosition);
+                                Firebase delete = new Firebase(MainActivity.FIREBASE_URL).child("events").child(mKeys.get(eventPosition));
+                                delete.removeValue();
+
+                                Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                                thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
+                                Toast.makeText(context, "Event deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }).setNegativeButton("No", null).show();
+                    }
+                });
+            } else {
+                holder.garbageIcon.setVisibility(View.GONE);
+                holder.garbageIcon.setClickable(false);
+            }
 
             holder.requestButton.setVisibility(View.GONE);
             holder.requestButton.setClickable(false);
         } else {
             params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
-            final String userID = mFirebaseUID.getAuth().getUid();
 
             if (userID.equals(event.creatorID)) {
                 holder.requestButton.setVisibility(View.GONE);
@@ -255,11 +264,14 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 holder.requestButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO submit application for this event, notify creator
-                        if (originalEvents.get(originalEvents.indexOf(event)).applicantIDs == null) {
-                            originalEvents.get(originalEvents.indexOf(event)).applicantIDs = new ArrayList<>();
+                        //TODO notify creator
+                        int eventPosition = originalEvents.indexOf(event);
+                        if (originalEvents.get(eventPosition).applicantIDs == null) {
+                            originalEvents.get(eventPosition).applicantIDs = new ArrayList<>();
                         }
-                        originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(userID);
+                        originalEvents.get(eventPosition).applicantIDs.add(userID);
+                        mFirebase.child(mKeys.get(eventPosition)).setValue(originalEvents.get(eventPosition));
+
                         holder.requestButton.setText("Submitted");
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
@@ -339,7 +351,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         if (lhs.date.before(rhs.date)) {
                             return isHomePage ? -1 : 1;
                         } else if (lhs.date.after(rhs.date)) {
-                            return isHomePage ? 1 : -1;;
+                            return isHomePage ? 1 : -1;
                         }
                         return 0;
                     }

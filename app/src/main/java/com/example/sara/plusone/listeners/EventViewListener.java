@@ -60,7 +60,12 @@ public class EventViewListener implements View.OnClickListener {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String,Map<String, String>> people = (Map<String,Map<String, String>>) dataSnapshot.getValue(Map.class);
-                posterField.setText(people.get(event.creatorID).get("name"));
+                Map<String, String> creator = people.get(event.creatorID);
+                if (creator != null) {
+                    posterField.setText(creator.get("name"));
+                } else {
+                    posterField.setText("Unknown");
+                }
             }
 
             @Override
