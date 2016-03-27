@@ -50,6 +50,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
     private ArrayList<Event> originalEvents;
     private boolean isHomePage;
     private Firebase mFirebase;
+    private Firebase mFireBaseUID;
     private ArrayList<String> mKeys;
 
     public EventAdapter(Context context, int resource, final ArrayList<Event> events, boolean isHomePage) {
@@ -62,7 +63,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         this.mKeys = new ArrayList<>();
 
         mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
-
+        mFireBaseUID = new Firebase(MainActivity.FIREBASE_URL);
         mFirebase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -227,7 +228,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         } else {
             params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
 
-            if (((MainActivity)context).currentUser.id.equals(event.creatorID)) {
+            if (mFireBaseUID.getAuth().getUid().equals(event.creatorID)) {
                 holder.requestButton.setVisibility(View.GONE);
                 holder.requestButton.setClickable(false);
             } else if (event.applicantIDs.contains(((MainActivity)context).currentUser.id)){
@@ -302,7 +303,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 String matchingString = pieces[0];
                 EventType eventType = pieces[1].equals("Any") ? null : EventType.fromString(pieces[1]);
 
-                String currentUserID = ((MainActivity)context).currentUser.id;
+                String currentUserID = mFireBaseUID.getAuth().getUid();
 
                 for (int i = 0; i < originalEvents.size(); i++) {
                     Event event = originalEvents.get(i);
