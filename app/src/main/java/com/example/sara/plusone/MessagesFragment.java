@@ -34,6 +34,7 @@ public class MessagesFragment extends Fragment {
     Firebase mFirebaseRef;
     PersonAdapter adapter;
     ListView listView;
+
     public MessagesFragment() {
         // Required empty public constructor
     }
