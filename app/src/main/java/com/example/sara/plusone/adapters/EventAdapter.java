@@ -22,10 +22,12 @@ import android.widget.Toast;
 import com.example.sara.plusone.EventsFragment;
 import com.example.sara.plusone.HomeFragment;
 import com.example.sara.plusone.MainActivity;
+import com.example.sara.plusone.NotificationsFragment;
 import com.example.sara.plusone.R;
 import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.listeners.EventViewListener;
 import com.example.sara.plusone.objects.Event;
+import com.example.sara.plusone.objects.Notification;
 import com.example.sara.plusone.objects.Search;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -61,6 +63,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         this.originalEvents = new ArrayList<>();
         this.isHomePage = isHomePage;
         this.mKeys = new ArrayList<>();
+
 
         mFirebaseUID = new Firebase(MainActivity.FIREBASE_URL);
         mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
@@ -239,7 +242,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             if (userID.equals(event.creatorID)) {
                 holder.requestButton.setVisibility(View.GONE);
                 holder.requestButton.setClickable(false);
-            } else if (event.applicantIDs.contains(userID)){
+            } else if (event.applicantIDs != null && event.applicantIDs.contains(userID)){
                 holder.requestButton.setText("Submitted");
                 holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                 holder.requestButton.setClickable(false);
@@ -250,7 +253,6 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         //TODO submit application for this event, notify creator
                         originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(userID);
                         holder.requestButton.setText("Submitted");
-                        Notification notification = new Notification(event.creatorID, "Someone wants to join you!",)
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
                         Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
@@ -264,7 +266,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
         holder.title.setLayoutParams(params);
         holder.layout.setBackgroundColor(context.getResources().getColor(EventType.fromString(event.type).getColorID()));
-        holder.title.setText(event.title + ": " + event.type.toString());
+            holder.title.setText(event.title + ": " + event.type.toString());
         holder.time.setText(SimpleDateFormat.getDateTimeInstance().format(event.date));
         holder.description.setText(event.description);
 
