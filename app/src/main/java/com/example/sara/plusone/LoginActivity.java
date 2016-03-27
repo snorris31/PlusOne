@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.sara.plusone.objects.CurrentUser;
+import com.example.sara.plusone.objects.SharedPrefWrapper;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -21,18 +23,19 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
-
 
     Button signIn;
     Button makeAccount;
     EditText email;
     EditText password;
     Firebase mFirebase;
-
+    SharedPrefWrapper mSharePref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Firebase.setAndroidContext(this);
         mFirebase = new Firebase(MainActivity.FIREBASE_URL);
+        mSharePref = new SharedPrefWrapper(this);
 
         signIn = (Button)findViewById(R.id.signIn);
         makeAccount = (Button)findViewById(R.id.createAccount);
@@ -55,11 +59,14 @@ public class LoginActivity extends AppCompatActivity {
                 mFirebase.authWithPassword(email.getText().toString(), password.getText().toString(), new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        Log.d("Test","User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                        String temp = authData.getUid();
                         latch.countDown();
-                        if (MainActivity.gUser != null){
-                            mFirebase.child("users").setValue(MainActivity.gUser);
-                        }
+                        Log.d("Test", "User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                        Map<String,String> tempMap = new HashMap<String, String>();
+                        tempMap.put("uid",temp);
+                        tempMap.put("name","Shannor");
+                        tempMap.put("age","21");
+                        mFirebase.child("users").child(temp).setValue(tempMap);
                     }
 
                     @Override
@@ -70,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                 awaitLatch(latch);
                 Intent intent = new Intent(getBaseContext(),MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -84,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
         private void awaitLatch(CountDownLatch latch) {
         try {
-            latch.await(50, TimeUnit.MILLISECONDS);
+            latch.await(700, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
