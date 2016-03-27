@@ -122,7 +122,6 @@ public class CreateEvent extends AppCompatActivity {
                 getFragmentManager().findFragmentById(R.id.pick_location);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            String placeSelected;
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
@@ -172,7 +171,7 @@ public class CreateEvent extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                if (placeSelected == null || nameEvent.toString().equals(" ") || descriptionEvent.toString().equals(" ")) {
+                if (placeSelected == null || nameEvent.getText().toString().matches("") || descriptionEvent.getText().toString().matches("")) {
                     final Dialog dialog = new Dialog(context);
                     dialog.setContentView(R.layout.popupview);
                     dialog.setTitle("Warning!");
@@ -193,6 +192,7 @@ public class CreateEvent extends AppCompatActivity {
                     System.out.println(nameEvent.getText().toString());
                     submitEvent.setText("Submitted");
                     submitEvent.setClickable(false);
+                    finish();
                 }
             }
         });
