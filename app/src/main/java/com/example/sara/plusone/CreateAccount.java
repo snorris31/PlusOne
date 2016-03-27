@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.sara.plusone.objects.CurrentUser;
+import com.example.sara.plusone.objects.SharedPrefWrapper;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
@@ -26,7 +27,7 @@ public class CreateAccount extends AppCompatActivity {
     Button create;
     Firebase mFirebase;
     EditText name;
-
+    SharedPrefWrapper mSharedPref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +36,8 @@ public class CreateAccount extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mFirebase = new Firebase(MainActivity.FIREBASE_URL);
+        mSharedPref = new SharedPrefWrapper(this);
+        mSharedPref.createLoginSession();
 
         email = (EditText)findViewById(R.id.editTextCreateEmail);
         password = (EditText)findViewById(R.id.editTextPassword);
@@ -50,11 +53,10 @@ public class CreateAccount extends AppCompatActivity {
                     @Override
                     public void onSuccess(Map<String, Object> stringObjectMap) {
                         Log.d("Test", "Successfully created user account with uid: " + stringObjectMap.get("uid"));
-//                        latch.countDown();
-                        if (MainActivity.gUser == null) {
-                            MainActivity.gUser = new CurrentUser(stringObjectMap.get("uid").toString(), name.getText().toString()
-                                    , Integer.parseInt(age.getText().toString()), null);
-                        }
+//                      if (MainActivity.gUser == null) {
+//                            MainActivity.gUser = new CurrentUser(stringObjectMap.get("uid").toString(), name.getText().toString()
+//                                    , Integer.parseInt(age.getText().toString()), null);
+//                        }
                     }
 
                     @Override
@@ -63,6 +65,8 @@ public class CreateAccount extends AppCompatActivity {
                     }
                 });
 //                awaitLatch(latch);
+                mSharedPref.setAge(Integer.parseInt(age.getText().toString()));
+                mSharedPref.setName(name.getText().toString());
                 finish();
             }
         });
