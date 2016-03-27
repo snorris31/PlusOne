@@ -11,16 +11,18 @@ import java.util.Map;
 public class Conversation {
     private String message;
     private long timestamp;
-    private String uid;
+    private String personalUid;
+    private String recipentUid;
 
     @SuppressWarnings("unused")
     public Conversation(){
 
     }
 
-    public Conversation(String msg, String uid){
+    public Conversation(String msg, String uid, String recipentUid){
         this.message = msg;
-        this.uid = uid;
+        this.personalUid = uid;
+        this.recipentUid = recipentUid;
     }
 
     public Map<String,String> getTimestamp(){
@@ -38,13 +40,21 @@ public class Conversation {
         return this.message;
     }
 
-    public String getUid(){return this.uid;}
+    public String getPersonalUid(){return this.personalUid;}
+
+    public String getRecipentUid() {
+        return recipentUid;
+    }
+
+    public void setRecipentUid(String recipentUid) {
+        this.recipentUid = recipentUid;
+    }
 
     public void setMessage(String message){
         this.message = message;
     }
 
-    public void setUid(String uid){
-        this.uid =  uid;
+    public void setPersonalUid(String uid){
+        this.personalUid =  uid;
     }
 }

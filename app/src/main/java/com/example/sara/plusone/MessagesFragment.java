@@ -35,6 +35,7 @@ public class MessagesFragment extends Fragment {
     Firebase mFirebaseRef;
     PersonAdapter adapter;
     ListView listView;
+    String userName;
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -70,15 +71,21 @@ public class MessagesFragment extends Fragment {
                 listView.setSelection(adapter.getCount() - 1);
             }
         });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(),ChatApplication.class);
-                Bundle bundle = new Bundle();
+
                 Person picked = (Person)parent.getItemAtPosition(position);
-                bundle.putString("uid",picked.getUid());
-                bundle.putString("name",picked.getName());
-                startActivity(intent,bundle);
+                if (!picked.getUid().equals(mFirebaseRef.getAuth().getUid())) {
+                    Intent intent = new Intent(getContext(), ChatApplication.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("uid", picked.getUid());
+                    bundle.putString("name", picked.getName());
+                    bundle.putString("currentName", userName);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -102,23 +109,15 @@ public class MessagesFragment extends Fragment {
 
         @Override
         protected void populateView(final View v, final Person model) {
-            //Pulls the user name from FireBase
-            mFireBaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    Map<String, String> userInfo = (Map<String, String>) dataSnapshot.getValue(Map.class);
-                    TextView senderName = (TextView) v.findViewById(R.id.personName);
-                    senderName.setText(model.name);
-//            ((TextView)v.findViewById(R.id.age_amount)).setText(model.age);
+            //Your own name
+            if(model.getUid().equals(currentUser)){
+                userName = model.getName();
+            }
 
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
-
+            TextView senderName = (TextView) v.findViewById(R.id.personName);
+            senderName.setText(model.name);
+            String age = "Age";
+            ((TextView)v.findViewById(R.id.age_amount)).setText(String.format("%s: %d", age, model.age));
 
         }
 
