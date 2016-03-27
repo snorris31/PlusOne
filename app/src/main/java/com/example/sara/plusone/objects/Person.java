@@ -3,6 +3,8 @@ package com.example.sara.plusone.objects;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +14,11 @@ import java.util.List;
 
 public class Person {
 
-    public String id;
+    public String uid;
     public String name;
     public int age;
+
+    @JsonIgnore
     public Bitmap picture;
 
     public Person(){
@@ -24,10 +28,43 @@ public class Person {
         this("-1", name, age, picture);
     }
 
-    public Person(String id, String name, int age, Bitmap picture) {
-        this.id = id;
+    public Person(String uid, String name, int age, Bitmap picture) {
+        this.uid = uid;
         this.name = name;
         this.age = age;
         this.picture = picture;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public Bitmap getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Bitmap picture) {
+        this.picture = picture;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getUid() {
+
+        return uid;
     }
 }
