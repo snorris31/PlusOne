@@ -210,7 +210,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 for (int i = 0; i < originalEvents.size(); i++) {
                     Event event = originalEvents.get(i);
                     boolean matchesString = matchingString.isEmpty() || event.title.toLowerCase().contains(matchingString.toLowerCase()) || event.description.toLowerCase().contains(matchingString.toLowerCase());
-                    boolean matchesEventType = eventType == null || (eventType == event.type);
+                    boolean matchesEventType = eventType == null || (eventType == EventType.fromString(event.type));
                     boolean isValid = (isHomePage && (currentUserID.equals(event.creatorID) || event.applicantIDs.contains(currentUserID))) || (!isHomePage && event.date.after(Calendar.getInstance().getTime()));
                     if (matchesString && matchesEventType && isValid) {
                         filteredList.add(event);

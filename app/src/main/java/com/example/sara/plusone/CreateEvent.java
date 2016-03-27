@@ -1,33 +1,35 @@
 package com.example.sara.plusone;
-
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
+import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.objects.Event;
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-
-import org.w3c.dom.Text;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
+import android.content.Context;
+import java.util.Date;
 
 public class CreateEvent extends AppCompatActivity {
 
@@ -36,7 +38,24 @@ public class CreateEvent extends AppCompatActivity {
     Button submitEvent;
     TextView datePicker;
     TextView timePicker;
+    EditText nameEvent;
     Spinner eventType;
+    String chosenPosition;
+    String placeSelected;
+    EditText descriptionEvent;
+    View dateEvent;
+    LinearLayout mainLayout;
+    SimpleDateFormat newDate;
+    PopupWindow popUp;
+    TextView tv;
+    Date finalDate;
+    int mYear;
+    int mMonth;
+    int mDay;
+    int hour;
+    int minute;
+    Dialog dialog;
+    Firebase mFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +63,14 @@ public class CreateEvent extends AppCompatActivity {
         setContentView(R.layout.activity_create_event);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
+        popUp = new PopupWindow(this);
+        tv = new TextView(this);
         timePicker = (TextView)findViewById(R.id.display_time);
         datePicker = (TextView)findViewById(R.id.display_date);
         setTime = (Button)findViewById(R.id.pick_time);
         setDate = (Button)findViewById(R.id.pick_date);
         submitEvent = (Button) findViewById(R.id.submit_event);
-
+        mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
 
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +119,6 @@ public class CreateEvent extends AppCompatActivity {
                 getFragmentManager().findFragmentById(R.id.pick_location);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            String placeSelected;
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
@@ -114,6 +132,26 @@ public class CreateEvent extends AppCompatActivity {
                 Log.i("Error", "An error occurred: " + status);
     }
         });
+        dateEvent = findViewById(R.id.display_date);
+        newDate = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            finalDate = newDate.parse(Integer.toString(mMonth)+"/"+Integer.toString(mDay)+"/"+Integer.toString(mYear));
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }
+        nameEvent = (EditText) findViewById(R.id.eventTitle);
+        descriptionEvent = (EditText) findViewById(R.id.editText);
+        eventType = (Spinner)findViewById(R.id.eventType);
+        eventType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                chosenPosition = (String) parent.getItemAtPosition(position);
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+        final Context context = this;
         submitEvent.setOnClickListener(new View.OnClickListener() {
             ArrayList<String> arr = new ArrayList<String>();
             Firebase userRef = new Firebase(MainActivity.FIREBASE_URL);
@@ -121,19 +159,29 @@ public class CreateEvent extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-//                Event event = new Event(userID, arr);
+                if (placeSelected == null || nameEvent.toString().equals(" ") || descriptionEvent.toString().equals(" ")) {
+                    final Dialog dialog = new Dialog(context);
+                    dialog.setContentView(R.layout.popupview);
+                    dialog.setTitle("Warning!");
+                    Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                    dialogButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    System.out.println(descriptionEvent.toString());
+                    Event event = new Event(userID, arr, chosenPosition, finalDate, placeSelected, timePicker.getText().toString(), nameEvent.getText().toString(), descriptionEvent.getText().toString(), false);
+                    mFirebase.push().setValue(event);
+
+                    submitEvent.setBackgroundColor(0x727272);
+                    System.out.println(nameEvent.getText().toString());
+                    submitEvent.setText("Submitted");
+                    submitEvent.setClickable(false);
+                }
             }
         });
-        eventType = (Spinner)findViewById(R.id.eventType);
-        eventType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String chosenPosition = (String) parent.getItemAtPosition(position);
-
-
-            }
-            public void onNothingSelected(AdapterView<?> arg0) { }
-        });
-
     }
 }
