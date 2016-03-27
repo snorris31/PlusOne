@@ -111,7 +111,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
-                    if (nextIndex == originalEvents.size()) {
+                    if (nextIndex >= originalEvents.size()) {
                         originalEvents.add(event);
                         mKeys.add(key);
                     } else {
@@ -130,7 +130,9 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 Event newModel = dataSnapshot.getValue(Event.class);
                 int index = mKeys.indexOf(key);
 
-                originalEvents.set(index, newModel);
+                if (index < originalEvents.size()) {
+                    originalEvents.set(index, newModel);
+                }
 
                 Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
                 thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);

@@ -165,7 +165,7 @@ public class CreateEvent extends AppCompatActivity {
         });
         final Context context = this;
         submitEvent.setOnClickListener(new View.OnClickListener() {
-            ArrayList<String> arr = new ArrayList<String>();
+            ArrayList<String> arr = new ArrayList<>();
             Firebase userRef = new Firebase(MainActivity.FIREBASE_URL);
             String userID = userRef.getAuth().getUid();
 

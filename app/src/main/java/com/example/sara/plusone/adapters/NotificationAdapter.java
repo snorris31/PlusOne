@@ -66,31 +66,19 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         } else {
             holder = (Holder)convertView.getTag();
         }
-        Notification notification = notifications.get(position);
-        holder.layout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        final Notification notification = notifications.get(position);
+        holder.layout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryLight));
         //TODO fetch user info from anySenderID
         //holder.userImage = ...
         holder.body.setText(notification.body);
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.layout.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryLight));
+                holder.layout.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+                notification.seen = true;
             }
         });
 
-
-
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.popupview);
-        dialog.setTitle(notification.affectedUserID);
-        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
         return convertView;
     }
 
