@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Zack on 3/26/2016.
@@ -61,7 +62,10 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         mFirebase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Event event = dataSnapshot.getValue(Event.class);
+//                Event event = dataSnapshot.getValue(Event.class);
+                Map<String,String> eventMap = (Map<String,String>)dataSnapshot.getValue(Map.class);
+                Event event = new Event();
+
                 String key = dataSnapshot.getKey();
 
                 // Insert into the correct location, based on previousChildName

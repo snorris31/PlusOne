@@ -93,4 +93,37 @@ public class Event {
     public String getDescription(){
         return this.description;
     }
+
+    public void setApplicantIDs(ArrayList<String> applicantIDs) {
+        this.applicantIDs = applicantIDs;
+    }
+
+    public void setType(EventType type) {
+        this.type = type;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public void setCreatorID(String creatorID) {
+
+        this.creatorID = creatorID;
+    }
 }
