@@ -50,10 +50,10 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
     private ArrayList<Event> originalEvents;
     private boolean isHomePage;
     private Firebase mFirebase;
-    private Firebase mFireBaseUID;
+    private Firebase mFirebaseUID;
     private ArrayList<String> mKeys;
 
-    public EventAdapter(Context context, int resource, final ArrayList<Event> events, boolean isHomePage) {
+    public EventAdapter(Context context, int resource, final ArrayList<Event> events, final boolean isHomePage) {
         super(context, resource, events);
         this.context = context;
         this.resource = resource;
@@ -62,8 +62,11 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
         this.isHomePage = isHomePage;
         this.mKeys = new ArrayList<>();
 
+        mFirebaseUID = new Firebase(MainActivity.FIREBASE_URL);
         mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
-        mFireBaseUID = new Firebase(MainActivity.FIREBASE_URL);
+
+        final EventAdapter thisInstance = this;
+
         mFirebase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -116,7 +119,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         mKeys.add(nextIndex, key);
                     }
                 }
-                notifyDataSetChanged();
+                Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
             }
 
             @Override
@@ -128,7 +132,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
 
                 originalEvents.set(index, newModel);
 
-                notifyDataSetChanged();
+                Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
             }
 
             @Override
@@ -141,7 +146,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 mKeys.remove(index);
                 originalEvents.remove(index);
 
-                notifyDataSetChanged();
+                Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
             }
 
             @Override
@@ -167,7 +173,8 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                         mKeys.add(nextIndex, key);
                     }
                 }
-                notifyDataSetChanged();
+                Search search = isHomePage ? HomeFragment.currentSearch : EventsFragment.currentSearch;
+                thisInstance.getFilter().filter(search.textMatch + "~" + search.eventType);
             }
 
             @Override
@@ -227,11 +234,12 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
             holder.requestButton.setClickable(false);
         } else {
             params.addRule(RelativeLayout.LEFT_OF, R.id.request_button);
+            final String userID = mFirebaseUID.getAuth().getUid();
 
-            if (mFireBaseUID.getAuth().getUid().equals(event.creatorID)) {
+            if (userID.equals(event.creatorID)) {
                 holder.requestButton.setVisibility(View.GONE);
                 holder.requestButton.setClickable(false);
-            } else if (event.applicantIDs.contains(((MainActivity)context).currentUser.id)){
+            } else if (event.applicantIDs.contains(userID)){
                 holder.requestButton.setText("Submitted");
                 holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                 holder.requestButton.setClickable(false);
@@ -240,7 +248,7 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                     @Override
                     public void onClick(View v) {
                         //TODO submit application for this event, notify creator
-                        originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(((MainActivity) context).currentUser.id);
+                        originalEvents.get(originalEvents.indexOf(event)).applicantIDs.add(userID);
                         holder.requestButton.setText("Submitted");
                         holder.requestButton.setTextColor(context.getResources().getColor(R.color.colorSecondaryText));
                         holder.requestButton.setClickable(false);
@@ -303,13 +311,13 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
                 String matchingString = pieces[0];
                 EventType eventType = pieces[1].equals("Any") ? null : EventType.fromString(pieces[1]);
 
-                String currentUserID = mFireBaseUID.getAuth().getUid();
+                String currentUserID = mFirebaseUID.getAuth().getUid();
 
                 for (int i = 0; i < originalEvents.size(); i++) {
                     Event event = originalEvents.get(i);
                     boolean matchesString = matchingString.isEmpty() || event.title.toLowerCase().contains(matchingString.toLowerCase()) || event.description.toLowerCase().contains(matchingString.toLowerCase());
                     boolean matchesEventType = eventType == null || (eventType == EventType.fromString(event.type));
-                    boolean isValid = (isHomePage && (currentUserID.equals(event.creatorID) || event.applicantIDs.contains(currentUserID))) || (!isHomePage && event.date.after(Calendar.getInstance().getTime()));
+                    boolean isValid = (isHomePage && (currentUserID.equals(event.creatorID) || (event.applicantIDs != null && event.applicantIDs.contains(currentUserID)))) || (!isHomePage && event.date.after(Calendar.getInstance().getTime()));
                     if (matchesString && matchesEventType && isValid) {
                         filteredList.add(event);
                     }

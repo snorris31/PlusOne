@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mPager;
     ScreenSlider mPagerAdapter;
     TabLayout tabLayout;
-    public CurrentUser currentUser;
     public ArrayList<Event> events;
     Firebase mFirebaseRef;
     SharedPrefWrapper mSharedPref;
