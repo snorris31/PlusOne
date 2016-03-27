@@ -12,7 +12,7 @@
 
     <!-- Will display all of the Chat messages-->
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/list_of_conversations"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -22,32 +22,5 @@
         tools:listitem="@layout/chat_item"
         >
     </ListView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray_light"
-        android:gravity="center_vertical"
-        android:padding="@dimen/pad_5dp"
-        tools:context=".MainActivity" >
-
-        <!-- Where the message is put-->
-        <EditText
-            android:id="@+id/sending_messages"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Message" >
-
-        </EditText>
-
-        <!-- Button that will be used to send the message.-->
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-    </LinearLayout>
 
 </LinearLayout>
