@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.provider.CalendarContract;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,17 @@ import com.example.sara.plusone.enums.EventType;
 import com.example.sara.plusone.listeners.EventViewListener;
 import com.example.sara.plusone.objects.Event;
 import com.example.sara.plusone.objects.Search;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Zack on 3/26/2016.
@@ -43,17 +49,134 @@ public class EventAdapter extends ArrayAdapter<Event> implements Filterable {
     private ArrayList<Event> events;
     private ArrayList<Event> originalEvents;
     private boolean isHomePage;
+    private Firebase mFirebase;
+    private ArrayList<String> mKeys;
 
-    public EventAdapter(Context context, int resource, ArrayList<Event> events, boolean isHomePage) {
+    public EventAdapter(Context context, int resource, final ArrayList<Event> events, boolean isHomePage) {
         super(context, resource, events);
         this.context = context;
         this.resource = resource;
-        this.events = new ArrayList(events);
-        this.originalEvents = events;
+        this.events = events;
+        this.originalEvents = new ArrayList<>();
         this.isHomePage = isHomePage;
+        this.mKeys = new ArrayList<>();
+
+        mFirebase = new Firebase(MainActivity.FIREBASE_URL).child("events");
+
+        mFirebase.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Event event = dataSnapshot.getValue(Event.class);
+//                Map<String,String> eventMap = (Map<String,String>)dataSnapshot.getValue(Map.class);
+//                Event event = new Event();
+//                if(eventMap.containsKey("applicantIDs")){
+//                    //Then load it
+//                }
+//                if (eventMap.containsKey("address")){
+//                    event.address = eventMap.get("address");
+//                }
+//                if (eventMap.containsKey("completed")){
+//                    event.completed = Boolean.parseBoolean(eventMap.get("completed"));
+//                }
+//                if (eventMap.containsKey("creatorID")){
+//                    event.creatorID = eventMap.get("creatorID");
+//                }
+//                if (eventMap.containsKey("date")){
+//                    event.setTimestamp(Long.parseLong(eventMap.get("date")));
+//                    event.date = event.getDateObject();
+//                }
+//                if (eventMap.containsKey("description")){
+//                    event.description = eventMap.get("description");
+//                }
+//                if (eventMap.containsKey("time")){
+//                    event.time = eventMap.get("time");
+//                }
+//                if (eventMap.containsKey("title")){
+//                    event.title = eventMap.get("title");
+//                }
+//                if (eventMap.containsKey("type")){
+//                   event.setType(eventMap.get("type"));
+//
+//                }
+                String key = dataSnapshot.getKey();
+
+                // Insert into the correct location, based on previousChildName
+                if (previousChildName == null) {
+                    originalEvents.add(0, event);
+                    mKeys.add(0, key);
+                } else {
+                    int previousIndex = mKeys.indexOf(previousChildName);
+                    int nextIndex = previousIndex + 1;
+                    if (nextIndex == originalEvents.size()) {
+                        originalEvents.add(event);
+                        mKeys.add(key);
+                    } else {
+                        originalEvents.add(nextIndex, event);
+                        mKeys.add(nextIndex, key);
+                    }
+                }
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // One of the mModels changed. Replace it in our list and name mapping
+                String key = dataSnapshot.getKey();
+                Event newModel = dataSnapshot.getValue(Event.class);
+                int index = mKeys.indexOf(key);
+
+                originalEvents.set(index, newModel);
+
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                // A model was removed from the list. Remove it from our list and the name mapping
+                String key = dataSnapshot.getKey();
+                int index = mKeys.indexOf(key);
+
+                mKeys.remove(index);
+                originalEvents.remove(index);
+
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+
+                // A model changed position in the list. Update our list accordingly
+                String key = dataSnapshot.getKey();
+                Event newModel = dataSnapshot.getValue(Event.class);
+                int index = mKeys.indexOf(key);
+                originalEvents.remove(index);
+                mKeys.remove(index);
+                if (previousChildName == null) {
+                    originalEvents.add(0, newModel);
+                    mKeys.add(0, key);
+                } else {
+                    int previousIndex = mKeys.indexOf(previousChildName);
+                    int nextIndex = previousIndex + 1;
+                    if (nextIndex == originalEvents.size()) {
+                        originalEvents.add(newModel);
+                        mKeys.add(key);
+                    } else {
+                        originalEvents.add(nextIndex, newModel);
+                        mKeys.add(nextIndex, key);
+                    }
+                }
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e("FirebaseListAdapter", "Listen was cancelled, no more updates will occur");
+            }
+        });
     }
 
-    @Override
+        @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final Holder holder;
         final LayoutInflater inflater = ((Activity) context).getLayoutInflater();

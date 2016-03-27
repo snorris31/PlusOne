@@ -190,6 +190,7 @@ public class CreateEvent extends AppCompatActivity {
 
                     submitEvent.setBackgroundColor(0x727272);
                     System.out.println(nameEvent.getText().toString());
+
                     submitEvent.setText("Submitted");
                     submitEvent.setClickable(false);
                     finish();

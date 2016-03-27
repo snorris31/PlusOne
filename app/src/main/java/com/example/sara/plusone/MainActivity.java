@@ -95,58 +95,13 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.home));
         tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.events));
         tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.messages));
-        //TODO change based on users notification status
         tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.notification_no_alert));
         AuthData authData = mFirebaseRef.getAuth();
-        if (authData != null) {
-            //TODO fetch all events from database
-
-//            //TODO fetch currentUser data here. this one is a demo
-//            ArrayList<Event> sampleEvents = new ArrayList<>();
-//            sampleEvents.add(new Event("-1", null, EventType.GREEK, new Date(0), "address", "Title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event("-1", null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.MOVIE, new Date(0), "address", "Another title", "description", false));
-//            sampleEvents.add(new Event(mFirebaseRef.getAuth().getUid(), null, EventType.OTHER, new Date(0), "address", "Yet another, long as fuck, possibly too long, title", "this is also an extremely long description, which may cause overflow problems in other cells. hopefully it doesnt. lorem ipsum fml", false));
-//            currentUser = new CurrentUser(mFirebaseRef.getAuth().getUid(), "test", 21, null);
-//            events = sampleEvents;
-
-            Firebase eventRef = new Firebase(FIREBASE_URL).child("events");
-//            eventRef.setValue(sampleEvents);
-
-//             user authenticated
-            Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
-        } else {
-//            Intent intent = new Intent(this,LoginActivity.class);
-//            startActivityForResult(intent, 1);
-            mFirebaseRef.createUser("TestEmail@gmail.com", "password", new Firebase.ValueResultHandler<Map<String, Object>>() {
-                @Override
-                public void onSuccess(Map<String, Object> stringObjectMap) {
-                    System.out.print(stringObjectMap.get("uid"));
-                }
-
-                @Override
-                public void onError(FirebaseError firebaseError) {
-
-                }
-            });
-
-            mFirebaseRef.authWithPassword("TestEmail@gmail.com", "password", new Firebase.AuthResultHandler() {
-                @Override
-                public void onAuthenticated(AuthData authData) {
-                    Toast.makeText(MainActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onAuthenticationError(FirebaseError firebaseError) {
-
-                }
-            });
-            // no user authenticated
+        //Person is logged out
+        if (authData == null){
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent, 1);
         }
-
-
     }
 
     @Override
@@ -155,14 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
-    }
-
-    private void awaitLatch(CountDownLatch latch) {
-        try {
-            latch.await(3, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -246,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if( id == R.id.signOut){
             mFirebaseRef.unauth();
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -52,6 +52,5 @@ public class MessageingAdapter extends FireBaseListAdapter<Conversation>{
 
         ((TextView)v.findViewById(R.id.message_content)).setText(model.getMessage());
 
-        //TODO:Add timestamps to messages. Look at the Conversation class.
     }
 }
